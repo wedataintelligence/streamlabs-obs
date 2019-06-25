@@ -63,7 +63,7 @@ export class NotifyService extends StatefulService<{}> {
   }
 
   uploadLastReplay(notificationMessage: string) {
-    const NOTIFY_URL = 'https://localhost:8080';
+    const NOTIFY_URL = 'http://localhost:8080';
 
     return new Promise(resolve => {
       setTimeout(() => {
@@ -77,7 +77,7 @@ export class NotifyService extends StatefulService<{}> {
         formData.append('username', this.userService.state.auth.platform.username);
         formData.append('account_type', this.userService.state.auth.platform.type);
         formData.append('message', notificationMessage);
-        const request = new Request(`${NOTIFY_URL}/upload`, { body: formData, method: 'POST' });
+        const request = new Request(`${NOTIFY_URL}/api/notify`, { body: formData, method: 'POST' });
         fetch(request).then(resolve);
         return;
       }, 5 * 1000);

@@ -15,6 +15,7 @@ import { UserService } from '../user';
 import { $t } from 'services/i18n';
 import { handlePlatformResponse, requiresToken } from './utils';
 import { NotifyService } from '../notify/notify';
+import { StreamingContext } from '../streaming';
 
 interface IYoutubeServiceState {
   liveStreamingEnabled: boolean;
