@@ -35,7 +35,7 @@ export class NotifyService extends StatefulService<{}> {
 
         await this.uploadLastReplay(notificationMessage);
         resolve();
-      }, 0 * 1000);
+      }, 20 * 1000);
     });
   }
 
