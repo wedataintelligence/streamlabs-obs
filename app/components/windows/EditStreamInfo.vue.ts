@@ -83,7 +83,8 @@ export default class EditStreamInfo extends Vue {
 
   hasUpdateTagsPermission: boolean = true;
 
-  goLiveNotificationMessageTemplate = 'I just went live, streaming ${game}, come watch!';
+  goLiveNotificationMessageTemplate =
+    'I just went live, streaming ${game}, come watch! \n${channel}';
 
   get useOptimizedProfile() {
     return this.videoEncodingOptimizationService.state.useOptimizedProfile;
@@ -304,10 +305,12 @@ export default class EditStreamInfo extends Vue {
   async goLive() {
     try {
       await this.streamingService.toggleStreaming({
-        notificationMessage: this.goLiveNotificationMessageTemplate.replace(
-          '${game}',
-          this.gameModel,
-        ),
+        notificationMessage: this.goLiveNotificationMessageTemplate
+          .replace('${game}', this.gameModel)
+          .replace(
+            '${channel}',
+            `https://twitch.tv/${this.userService.state.auth.platform.username}`,
+          ),
       });
       this.windowsService.closeChildWindow();
     } catch (e) {
