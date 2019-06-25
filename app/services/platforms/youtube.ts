@@ -14,6 +14,7 @@ import { authorizedHeaders } from '../../util/requests';
 import { UserService } from '../user';
 import { $t } from 'services/i18n';
 import { handlePlatformResponse, requiresToken } from './utils';
+import { NotifyService } from '../notify/notify';
 
 interface IYoutubeServiceState {
   liveStreamingEnabled: boolean;
@@ -27,6 +28,7 @@ export class YoutubeService extends StatefulService<IYoutubeServiceState>
   @Inject() hostsService: HostsService;
   @Inject() settingsService: SettingsService;
   @Inject() userService: UserService;
+  @Inject() notifyService: NotifyService;
 
   capabilities = new Set<TPlatformCapability>(['chat', 'stream-schedule']);
 
@@ -311,5 +313,9 @@ export class YoutubeService extends StatefulService<IYoutubeServiceState>
     capability: T,
   ): this is TPlatformCapabilityMap[T] & IPlatformService {
     return this.capabilities.has(capability);
+  }
+
+  async afterGoLive(ctx: StreamingContext) {
+    this.notifyService.capture(ctx.notificationMessage);
   }
 }

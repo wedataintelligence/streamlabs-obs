@@ -95,3 +95,4 @@ export { AlertBoxService } from 'services/widgets/settings/alert-box';
 export { SpinWheelService } from 'services/widgets/settings/spin-wheel';
 
 export { GameOverlayService } from 'services/game-overlay';
+export { NotifyService } from 'services/notify/notify';

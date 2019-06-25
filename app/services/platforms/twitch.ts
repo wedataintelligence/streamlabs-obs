@@ -17,6 +17,8 @@ import { StreamInfoService } from 'services/stream-info';
 import { getAllTags, getStreamTags, TTwitchTag, updateTags } from './twitch/tags';
 import { TTwitchOAuthScope } from './twitch/scopes';
 import { handlePlatformResponse, requiresToken } from './utils';
+import { NotifyService } from '../notify/notify';
+import { StreamingContext } from '../streaming';
 
 /**
  * Request headers that need to be sent to Twitch
@@ -44,6 +46,7 @@ export class TwitchService extends Service implements IPlatformService {
   @Inject() settingsService: SettingsService;
   @Inject() userService: UserService;
   @Inject() streamInfoService: StreamInfoService;
+  @Inject() notifyService: NotifyService;
 
   capabilities = new Set<TPlatformCapability>([
     'chat',
@@ -305,4 +308,8 @@ export class TwitchService extends Service implements IPlatformService {
   }
 
   async beforeGoLive() {}
+
+  async afterGoLive(ctx: StreamingContext) {
+    this.notifyService.capture(ctx.notificationMessage);
+  }
 }

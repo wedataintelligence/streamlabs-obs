@@ -93,6 +93,14 @@
             :metadata="{ title: $t('Do not show this message when going live') }"
           />
         </h-form-group>
+
+        <h-form-group
+          v-if="!midStreamMode"
+          :metadata="{ title: 'Go Live notification message', fullWidth: true }"
+        >
+          <textarea v-model="goLiveNotificationMessageTemplate"></textarea>
+        </h-form-group>
+
         <div class="update-warning" v-if="updateError">
           <div v-if="midStreamMode">
             {{ $t('Something went wrong while updating your stream info.  Please try again.') }}

@@ -56,6 +56,7 @@ interface IOBSOutputSignalInfo {
 export interface StreamingContext {
   twitchTags?: TTwitchTagWithLabel[];
   allTwitchTags?: TTwitchTag[];
+  notificationMessage?: string;
 }
 
 export class StreamingService extends StatefulService<IStreamingServiceState>
