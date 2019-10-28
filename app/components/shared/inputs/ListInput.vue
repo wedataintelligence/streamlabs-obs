@@ -8,6 +8,7 @@
   :data-internal-search="options.internalSearch"
 >
   <label>{{ title }}</label>
+  <input type="text" v-validate="validate" :name="options.uuid" :value="currentMultiselectValue"/>
   <multiselect
     :value="currentMultiselectValue"
     :options="options.options"
