@@ -241,6 +241,7 @@ export class StreamlabelsService extends Service {
    * for a socket event
    */
   private fetchInitialData(): void {
+    console.log('fetching initial data');
     if (!this.userService.isLoggedIn()) return;
 
     const url = `https://${this.hostsService.streamlabs}/api/v5/slobs/stream-labels/files`;
@@ -253,6 +254,7 @@ export class StreamlabelsService extends Service {
   }
 
   private fetchSettings(): void {
+    console.log('fetching settings');
     if (!this.userService.isLoggedIn()) return;
 
     const url = `https://${this.hostsService.streamlabs}/api/v5/slobs/stream-labels/settings`;
@@ -433,6 +435,7 @@ export class StreamlabelsService extends Service {
   private writeFileForStat(statname: string) {
     if (this.output[statname] == null) return;
     if (this.subscriptions[statname] == null) return;
+    console.log(this.getStreamlabelsPath(this.subscriptions[statname].filename));
 
     electron.ipcRenderer.send('streamlabels-writeFile', {
       path: this.getStreamlabelsPath(this.subscriptions[statname].filename),
