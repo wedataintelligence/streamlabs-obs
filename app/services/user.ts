@@ -32,6 +32,7 @@ import { NavigationService } from './navigation';
 import { SettingsService } from './settings';
 import * as obs from '../../obs-api';
 import { StreamSettingsService } from './settings/streaming';
+import { TwitchService } from './platforms/twitch';
 
 interface ISecondaryPlatformAuth {
   username: string;
@@ -178,6 +179,7 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
       'testing-fakeAuth',
       async (e: Electron.Event, auth: IUserAuth, isOnboardingTest: boolean) => {
         const service = getPlatformService(auth.primaryPlatform);
+        this.streamSettingsService.resetStreamSettings();
         await this.login(service, auth);
         if (!isOnboardingTest) this.onboardingService.finish();
       },
@@ -526,10 +528,16 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
         let result: EPlatformCallResult;
 
         if (!merge) {
+          // Ensure we are starting with fresh stream settings
+          this.streamSettingsService.resetStreamSettings();
+
           result = await this.login(service, parsed);
 
-          // A fresh auth should enable protected mode
-          this.streamSettingsService.setSettings({ protectedModeEnabled: true });
+          // Setup service so the autoconfig can run
+          if (platform === 'twitch' && service instanceof TwitchService) {
+            const key = await service.fetchStreamKey();
+            this.streamSettingsService.setSettings({ key, platform: 'twitch' });
+          }
         } else {
           this.UPDATE_PLATFORM(parsed.platforms[parsed.primaryPlatform]);
           result = EPlatformCallResult.Success;
