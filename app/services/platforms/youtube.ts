@@ -189,7 +189,11 @@ export class YoutubeService extends StatefulService<IYoutubeServiceState>
 
     // setup key and platform type in the OBS settings
     const streamKey = stream.cdn.ingestionInfo.streamName;
-    this.streamSettingsService.setSettings({ platform: 'youtube', key: streamKey });
+    this.streamSettingsService.setSettings({
+      platform: 'youtube',
+      key: streamKey,
+      streamType: 'rtmp_common',
+    });
 
     // update the local chanel info based on the selected broadcast and emit the "channelInfoChanged" event
     this.setActiveBroadcast(broadcast);
@@ -311,6 +315,7 @@ export class YoutubeService extends StatefulService<IYoutubeServiceState>
   }
 
   async fetchViewerCount(): Promise<number> {
+    if (!this.activeChannel) return 0; // activeChannel is not available when streaming to custom ingest
     const endpoint = 'videos?part=snippet,liveStreamingDetails';
     const url = `${this.apiBase}/${endpoint}&id=${this.activeChannel.broadcastId}&access_token=${
       this.oauthToken

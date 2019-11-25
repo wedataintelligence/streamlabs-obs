@@ -209,7 +209,6 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
 
     const service = getPlatformService(this.state.auth.primaryPlatform);
     await this.login(service, this.state.auth);
-    this.refreshUserInfo();
   }
 
   /**
@@ -454,10 +453,27 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
 
     // Currently we treat generic errors as success
     if (result === EPlatformCallResult.TwitchTwoFactor) {
-      this.LOGOUT();
+      await this.logOut();
       return result;
     }
 
+    if (result === EPlatformCallResult.TwitchScopeMissing) {
+      await this.logOut();
+      this.showLogin();
+
+      electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), {
+        type: 'warning',
+        title: 'Twitch Error',
+        message: $t(
+          $t('Your Twitch login is expired. Please log in again to continue using Streamlabs OBS'),
+        ),
+        buttons: [$t('Refresh Login')],
+      });
+
+      return result;
+    }
+
+    this.refreshUserInfo();
     this.setSentryContext();
 
     this.userLogin.next(auth);
@@ -532,12 +548,6 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
           this.streamSettingsService.resetStreamSettings();
 
           result = await this.login(service, parsed);
-
-          // Setup service so the autoconfig can run
-          if (platform === 'twitch' && service instanceof TwitchService) {
-            const key = await service.fetchStreamKey();
-            this.streamSettingsService.setSettings({ key, platform: 'twitch' });
-          }
         } else {
           this.UPDATE_PLATFORM(parsed.platforms[parsed.primaryPlatform]);
           result = EPlatformCallResult.Success;
