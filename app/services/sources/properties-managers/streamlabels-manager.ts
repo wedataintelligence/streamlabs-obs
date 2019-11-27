@@ -83,6 +83,8 @@ export class StreamlabelsManager extends DefaultManager {
 
     this.subscription = this.streamlabelsService.subscribe(this.settings.statname);
 
+    console.log(this.obsSource);
+
     this.obsSource.update({
       ...this.obsSource.settings,
       read_from_file: true,

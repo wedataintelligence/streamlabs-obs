@@ -60,6 +60,9 @@ interface ITrains {
   follow: ITrainInfo;
 }
 
+//TODO: encompass all possible data types
+type TUnderlyingDataType = any;
+
 type TTrainType = 'donation' | 'follow' | 'subscription';
 
 function isDonationTrain(train: ITrainInfo | IDonationTrainInfo): train is IDonationTrainInfo {
@@ -83,6 +86,11 @@ export class StreamlabelsService extends Service {
    * Represents settings which are stored on the server
    */
   settings: Dictionary<IStreamlabelSettings> = {};
+
+  /**
+   * Represents raw data to insert into templates
+   */
+  underlyingData: Dictionary<any> = {};
 
   /**
    * Holds info about currently active subscribers
@@ -132,9 +140,11 @@ export class StreamlabelsService extends Service {
     });
   }
 
-  onUserLogin() {
-    this.fetchInitialData();
-    this.fetchSettings();
+  async onUserLogin() {
+    await this.fetchInitialData();
+    await this.fetchSettings();
+    await this.fetchUnderlyingData();
+    this.applyTemplate();
   }
 
   /**
@@ -251,6 +261,20 @@ export class StreamlabelsService extends Service {
     fetch(request)
       .then(handleResponse)
       .then(json => this.updateOutput(json.data));
+  }
+
+  // Runxi's hacky route
+  private fetchUnderlyingData(): void {
+    console.log('fetching underlying data');
+    if (!this.userService.isLoggedIn()) return;
+
+    const url = `https://${this.hostsService.streamlabs}/api/v5/slobs/stream-labels/original_data`;
+    const headers = authorizedHeaders(this.userService.apiToken);
+    const request = new Request(url, { headers });
+
+    fetch(request)
+      .then(handleResponse)
+      .then(json => this.updateUnderlyingData(json.data));
   }
 
   private fetchSettings(): void {
@@ -378,6 +402,9 @@ export class StreamlabelsService extends Service {
       this.trains.subscription.mostRecentName = latest.name;
 
       this.outputTrainInfo('subscription');
+    } else if (event.type === 'streamlabels.underlying') {
+      console.log("UNDERLYING DATA GOTTEN");
+      console.log(event);
     }
   }
 
@@ -406,11 +433,18 @@ export class StreamlabelsService extends Service {
    * @param settingsPatch the new settings to be applied
    */
   private updateSettings(settingsPatch: Dictionary<IStreamlabelSettings>) {
+    console.log('shettings');
+    console.log(settingsPatch);
     this.settings = {
       ...this.settings,
       ...settingsPatch,
     };
     this.outputAllTrains();
+  }
+
+  private applyTemplate() {
+    console.log(this.settings, this.underlyingData);
+    console.log("HJKFKHJJKHFJHK");
   }
 
   /**
@@ -419,12 +453,21 @@ export class StreamlabelsService extends Service {
    * @param outputPatch the new output strings
    */
   private updateOutput(outputPatch: Dictionary<string>) {
+    console.log(outputPatch);
     this.output = {
       ...this.output,
       ...outputPatch,
     };
 
     Object.keys(outputPatch).forEach(stat => this.writeFileForStat(stat));
+  }
+
+  private updateUnderlyingData(underlyingPatch: Dictionary<any>) {
+    console.log(underlyingPatch);
+    this.underlyingData = {
+      ...this.underlyingData,
+      ...underlyingPatch,
+    };
   }
 
   /**

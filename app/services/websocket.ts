@@ -11,6 +11,7 @@ import { IRecentEvent } from 'services/recent-events';
 
 export type TSocketEvent =
   | IStreamlabelsSocketEvent
+  | IStreamlabelsUnderlyingSocketEvent
   | IAlertPlayingSocketEvent
   | IAlertProfileChanged
   | IEventSocketEvent
@@ -22,6 +23,13 @@ export type TSocketEvent =
 
 interface IStreamlabelsSocketEvent {
   type: 'streamlabels';
+  message: {
+    data: Dictionary<string>;
+  };
+}
+
+interface IStreamlabelsUnderlyingSocketEvent {
+  type: 'streamlabels.underlying';
   message: {
     data: Dictionary<string>;
   };
