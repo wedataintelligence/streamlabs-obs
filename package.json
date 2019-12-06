@@ -141,6 +141,7 @@
     "pixelmatch": "4.0.2",
     "pngjs": "3.3.3",
     "prettier": "1.15.2",
+    "profanity_utility": "git+ssh://git@github.com/twitchalerts/profanity_utility.git",
     "progress": "2.0.0",
     "raw-loader": "2.0.0",
     "recursive-readdir": "2.2.2",

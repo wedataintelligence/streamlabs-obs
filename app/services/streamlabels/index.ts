@@ -12,6 +12,7 @@ import rimraf from 'rimraf';
 import without from 'lodash/without';
 import { AppService } from 'services/app';
 import { InitAfter } from '../core';
+import PU from 'profanity_utility/src/ProfanityUtility';
 
 interface IStreamlabelActiveSubscriptions {
   filename: string;
@@ -135,6 +136,26 @@ export class StreamlabelsService extends Service {
   onUserLogin() {
     this.fetchInitialData();
     this.fetchSettings();
+    this.fetchProfanityConfig();
+  }
+
+  fetchProfanityConfig() {
+    // const profanity = new ProfanityUtility();
+    const settings = {
+      profanity_custom_words: '',
+      profanity_default_words: true,
+      profanity_mode: 1,
+      profanity_names: true,
+    };
+    const message = 'shit you fucking bitch what the gay bastard maturbating hell you fuck';
+    console.log(PU);
+
+    // const clean = ProfanityUtility.profanitize(message, 'kevin', settings);
+    const clean = PU.checkForProfanity(message, settings);
+    const words = PU.profanitize(message, 'kevin', settings);
+
+
+    console.log('woo', clean, words);
   }
 
   /**
