@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const windowsService: WindowsService = WindowsService.instance;
 
     if (Utils.isMainWindow()) {
+      console.log('Spawing main renderer');
       // Services
       const appService: AppService = AppService.instance;
       const obsUserPluginsService: ObsUserPluginsService = ObsUserPluginsService.instance;
@@ -155,8 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // This is used for debugging
       window['obs'] = obs;
 
+      console.log(obs);
+      console.log('Host');
       // Host a new OBS server instance
-      obs.IPC.host(`slobs-${uuid()}`);
+      // obs.IPC.host(`slobs-${uuid()}`);
       obs.NodeObs.SetWorkingDirectory(
         path.join(
           electron.remote.app.getAppPath().replace('app.asar', 'app.asar.unpacked'),
@@ -165,16 +168,19 @@ document.addEventListener('DOMContentLoaded', () => {
         ),
       );
 
+      console.log('Register process');
       crashHandler.registerProcess(appService.pid, false);
 
       await obsUserPluginsService.initialize();
 
+      console.log('OBS_API_initAPI - start');
       // Initialize OBS API
       const apiResult = obs.NodeObs.OBS_API_initAPI(
         'en-US',
         appService.appDataDirectory,
         electron.remote.process.env.SLOBS_VERSION,
       );
+      console.log('OBS_API_initAPI - start');
 
       if (apiResult !== obs.EVideoCodes.Success) {
         const message = apiInitErrorResultToMessage(apiResult);
@@ -183,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         crashHandler.unregisterProcess(appService.pid);
 
         obs.NodeObs.StopCrashHandler();
-        obs.IPC.disconnect();
+        // obs.IPC.disconnect();
 
         electron.ipcRenderer.send('shutdownComplete');
         return;

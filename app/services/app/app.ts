@@ -161,7 +161,7 @@ export class AppService extends StatefulService<IAppState> {
       await this.fileManagerService.flushAll();
       obs.NodeObs.RemoveSourceCallback();
       obs.NodeObs.OBS_service_removeCallback();
-      obs.IPC.disconnect();
+      // obs.IPC.disconnect();
       this.crashReporterService.endShutdown();
       electron.ipcRenderer.send('shutdownComplete');
     }, 300);
