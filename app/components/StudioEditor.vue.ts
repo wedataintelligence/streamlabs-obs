@@ -14,7 +14,7 @@ import { TransitionsService } from 'services/transitions';
 import { CustomizationService } from 'services/customization';
 import { v2 } from '../util/vec2';
 import { EditorCommandsService } from 'services/editor-commands';
-import { ERenderingMode } from '../../obs-api';
+import * as obs from '../../obs-api';
 
 interface IResizeRegion {
   name: string;
@@ -60,6 +60,56 @@ export default class StudioEditor extends Vue {
   $refs: {
     display: HTMLDivElement;
   };
+
+  convertBackendEvent (event: any): any {
+    const rect =  this.$refs.display.getBoundingClientRect();
+    return {
+      altKey: event.altKey,
+      ctrlKey: event.ctrlKey,
+      shiftKey: event.shiftKey,
+      button: event.button,
+      buttons: event.buttons,
+      offsetX: event.x,
+      offsetY: rect.height - event.y,
+      pageX: rect.left + event.x,
+      pageY: rect.height  - event.y + rect.top
+    };
+  }
+
+  mounted() {
+    obs.NodeObs.RegisterMouseEventsCallbacks([
+      {
+        type: 0,
+        callback: (event: any) => {
+          this.handleMouseDown(this.convertBackendEvent(event) as MouseEvent);
+        }
+      },
+      {
+        type: 1,
+        callback: (event: any) => {
+          this.handleMouseUp(this.convertBackendEvent(event) as MouseEvent);
+        }
+      },
+      {
+        type: 2,
+        callback: (event: any) => {
+          this.handleMouseMove(this.convertBackendEvent(event) as MouseEvent);
+        }
+      },
+      {
+        type: 3,
+        callback: (event: any) => {
+          this.handleMouseMove(this.convertBackendEvent(event) as MouseEvent);
+        }
+      },
+      {
+        type: 4,
+        callback: (event: any) => {
+          this.handleMouseEnter(this.convertBackendEvent(event) as MouseEvent);
+        }
+      }
+    ]);
+  }
 
   onOutputResize(region: IRectangle) {
     this.renderedWidth = region.width;
@@ -217,7 +267,8 @@ export default class StudioEditor extends Vue {
     const mousePosX = event.offsetX - this.renderedOffsetX;
     const mousePosY = event.offsetY - this.renderedOffsetY;
 
-    const factor = this.windowsService.state.main.scaleFactor;
+    // const factor = this.windowsService.state.main.scaleFactor;
+    const factor = 1;
     const converted = this.convertScalarToBaseSpace(mousePosX * factor, mousePosY * factor);
 
     if (this.resizeRegion) {
@@ -416,8 +467,8 @@ export default class StudioEditor extends Vue {
   // Takes the given mouse event, and determines if it is
   // over the given box in base resolution space.
   isOverBox(event: MouseEvent, x: number, y: number, width: number, height: number) {
-    const factor = this.windowsService.state.main.scaleFactor;
-
+    // const factor = this.windowsService.state.main.scaleFactor;
+    const factor = 1;
     const mouse = this.convertVectorToBaseSpace(event.offsetX * factor, event.offsetY * factor);
 
     const box = { x, y, width, height };
@@ -535,12 +586,13 @@ export default class StudioEditor extends Vue {
   }
 
   get renderingMode() {
-    return ERenderingMode.OBS_MAIN_RENDERING;
+    return obs.ERenderingMode.OBS_MAIN_RENDERING;
   }
 
   generateResizeRegionsForItem(item: SceneItem): IResizeRegion[] {
     const renderedRegionRadius = 5;
-    const factor = this.windowsService.state.main.scaleFactor;
+    // const factor = this.windowsService.state.main.scaleFactor;
+    const factor = 1;
     const regionRadius = (renderedRegionRadius * factor * this.baseWidth) / this.renderedWidth;
     const width = regionRadius * 2;
     const height = regionRadius * 2;

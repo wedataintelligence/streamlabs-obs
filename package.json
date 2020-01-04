@@ -62,7 +62,6 @@
     "serial": true
   },
   "dependencies": {
-    "@streamlabs/game-overlay": "https://obs-studio-deployment.s3-us-west-2.amazonaws.com/game-overlay-vv0.0.38electron6.tar.gz",
     "archiver": "2.1.1",
     "aws-sdk": "^2.344.0",
     "crash-handler": "https://github.com/stream-labs/crash-handler/releases/download/v0.0.40/iojs-v6.0.3-crash-handler.tar.gz",
@@ -137,7 +136,6 @@
     "mark.js": "^8.11.1",
     "mime": "2.4.3",
     "moment": "2.22.2",
-    "node-win32-np": "1.0.6",
     "pixelmatch": "4.0.2",
     "pngjs": "3.3.3",
     "prettier": "1.15.2",

@@ -157,6 +157,8 @@ export default class SourcesShowcase extends Vue {
         return !(type.value === 'scene' && this.scenesService.scenes.length <= 1);
       })
       .map(listItem => {
+        console.log('name ' + this.sourceData(listItem.value).name);
+        console.log('description ' + this.sourceData(listItem.value).description);
         return {
           id: listItem.value,
           type: listItem.value,

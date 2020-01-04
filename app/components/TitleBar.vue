@@ -1,5 +1,5 @@
 <template>
-<div class="titlebar" :class="theme">
+<div class="titlebar" :class="theme" @mousedown="handleMouseDown">
   <img class="titlebar-icon" src="../../media/images/icon.ico" />
   <div class="titlebar-title">
     {{ title }}

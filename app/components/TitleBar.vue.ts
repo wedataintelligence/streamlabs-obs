@@ -6,11 +6,13 @@ import { Inject } from 'services/core/injector';
 import { StreamingService } from 'services/streaming';
 import Utils from 'services/utils';
 import { $t } from 'services/i18n';
+import { VideoService } from 'services/video';
 
 @Component({})
 export default class TitleBar extends Vue {
   @Inject() customizationService: CustomizationService;
   @Inject() streamingService: StreamingService;
+  @Inject() videoService: VideoService;
 
   @Prop() title: string;
 
@@ -42,5 +44,9 @@ export default class TitleBar extends Vue {
 
   get theme() {
     return this.customizationService.currentTheme;
+  }
+
+  handleMouseDown() {
+    this.videoService.setOBSDisplayFocused('test', true);
   }
 }

@@ -20,7 +20,7 @@
       />
     </div>
 
-    <div class="main-middle" :class="mainResponsiveClasses" ref="mainMiddle">
+    <div class="main-middle" :class="mainResponsiveClasses" ref="mainMiddle" @mousedown="handleMouseDown">
       <resize-observer @notify="handleResize" />
       <component
         class="main-page-container"

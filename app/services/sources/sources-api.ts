@@ -104,7 +104,14 @@ export type TSourceType =
   | 'openvr_capture'
   | 'liv_capture'
   | 'ovrstream_dc_source'
-  | 'vlc_source';
+  | 'vlc_source'
+  | 'coreaudio_input_capture'
+  | 'coreaudio_output_capture'
+  | 'av_capture_input'
+  | 'display_capture'
+  // | 'syphon-input'
+  | 'text_ft2_source'
+  | 'audio_line';
 
 // Register new properties managers here
 export type TPropertiesManager = 'default' | 'widget' | 'streamlabels' | 'platformApp' | 'replay';

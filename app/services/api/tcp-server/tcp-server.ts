@@ -80,7 +80,7 @@ export class TcpServerService extends PersistentStatefulService<ITcpServersSetti
 
   listen() {
     this.listenConnections(this.createTcpServer());
-    if (this.state.namedPipe.enabled) this.listenConnections(this.createNamedPipeServer());
+    // if (this.state.namedPipe.enabled) this.listenConnections(this.createNamedPipeServer());
     if (this.state.websockets.enabled) this.listenConnections(this.createWebsoketsServer());
   }
 
@@ -233,14 +233,14 @@ export class TcpServerService extends PersistentStatefulService<ITcpServersSetti
   }
 
   private createNamedPipeServer(): IServer {
-    const settings = this.state.namedPipe;
-    const server = net.createServer();
-    server.listen(`\\\\.\\pipe\\${settings.pipeName}`);
+    // const settings = this.state.namedPipe;
+    // const server = net.createServer();
+    // server.listen(`\\\\.\\pipe\\${settings.pipeName}`);
     return {
       type: 'namedPipe',
-      nativeServer: server,
+      nativeServer: null, //server
       close() {
-        server.close();
+        // server.close();
       },
     };
   }

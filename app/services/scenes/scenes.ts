@@ -195,7 +195,6 @@ export class ScenesService extends StatefulService<IScenesState> {
           newItem.setSettings(item.getSettings());
         });
     }
-
     this.sceneAdded.next(this.state.scenes[id]);
     if (options.makeActive) this.makeSceneActive(id);
     return this.getScene(id);
@@ -257,9 +256,7 @@ export class ScenesService extends StatefulService<IScenesState> {
     if (!scene) return false;
 
     const activeScene = this.activeScene;
-
     this.transitionsService.transition(activeScene && activeScene.id, scene.id);
-
     this.MAKE_SCENE_ACTIVE(id);
     this.sceneSwitched.next(scene.getModel());
     return true;

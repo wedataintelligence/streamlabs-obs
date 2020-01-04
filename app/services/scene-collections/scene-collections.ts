@@ -588,8 +588,11 @@ export class SceneCollectionsService extends Service implements ISceneCollection
    * in an empty scene collection.
    */
   private setupEmptyCollection() {
+    console.log('Setup empty scene collection');
     this.scenesService.createScene('Scene', { makeActive: true });
+    console.log('Setup default audio');
     this.setupDefaultAudio();
+    console.log('Ensure transition');
     this.transitionsService.ensureTransition();
   }
 
@@ -597,16 +600,16 @@ export class SceneCollectionsService extends Service implements ISceneCollection
    * Creates the default audio sources
    */
   private setupDefaultAudio() {
-    this.sourcesService.createSource(
-      'Desktop Audio',
-      'wasapi_output_capture',
-      {},
-      { channel: E_AUDIO_CHANNELS.OUTPUT_1 },
-    );
+    // this.sourcesService.createSource(
+    //   'Desktop Audio',
+    //   'coreaudio_output_capture', //wasapi_output_capture
+    //   {},
+    //   { channel: E_AUDIO_CHANNELS.OUTPUT_1 },
+    // );
 
     this.sourcesService.createSource(
       'Mic/Aux',
-      'wasapi_input_capture',
+      'coreaudio_input_capture', // wasapi_output_capture
       {},
       { channel: E_AUDIO_CHANNELS.INPUT_1 },
     );

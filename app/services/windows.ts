@@ -190,12 +190,15 @@ export class WindowsService extends StatefulService<IWindowsState> {
 
     this.updateScaleFactor('main');
     this.updateScaleFactor('child');
-    this.windows.main.on('move', () => this.updateScaleFactor('main'));
+    this.windows.main.on('move', (event: any) => {
+      this.updateScaleFactor('main');
+    });
     this.windows.child.on('move', () => this.updateScaleFactor('child'));
   }
 
   @throttle(500)
   private updateScaleFactor(windowId: string) {
+    // console.log('updateScaleFactor: ' + windowId);
     const window = this.windows[windowId];
     if (window && !window.isDestroyed()) {
       const bounds = window.getBounds();

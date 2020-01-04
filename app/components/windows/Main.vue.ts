@@ -30,6 +30,7 @@ import Help from '../pages/Help.vue';
 import electron from 'electron';
 import ResizeBar from 'components/shared/ResizeBar.vue';
 import FacebookMerge from 'components/pages/FacebookMerge';
+import { VideoService } from 'services/video';
 
 @Component({
   components: {
@@ -60,6 +61,7 @@ export default class Main extends Vue {
   @Inject() scenesService: ScenesService;
   @Inject() platformAppsService: PlatformAppsService;
   @Inject() editorCommandsService: EditorCommandsService;
+  @Inject() videoService: VideoService;
 
   mounted() {
     const dockWidth = this.customizationService.state.livedockSize;
@@ -196,6 +198,10 @@ export default class Main extends Vue {
 
   onResizeStartHandler() {
     this.windowsService.updateStyleBlockers('main', true);
+  }
+
+  handleMouseDown () {
+    this.videoService.setOBSDisplayFocused('test', true);
   }
 
   onResizeStopHandler(offset: number) {

@@ -4,6 +4,10 @@ import { Inject } from 'services/core/injector';
 import { VideoService, Display as OBSDisplay } from 'services/video';
 import { WindowsService } from 'services/windows';
 import { CustomizationService } from 'services/customization';
+import electron from 'electron';
+import * as obs from '../../../obs-api';
+
+const { remote } = electron;
 
 interface DisplayProps {
   sourceId: string;
@@ -55,7 +59,30 @@ export default class Display extends TsxComponent<DisplayProps> {
       this.$emit('outputResize', region);
     });
 
+    if (!this.sourceId) {
+      
+    }
+
     this.display.trackElement(this.$refs.display);
+
+    const electronWindow = remote.BrowserWindow.fromId(remote.getCurrentWindow().id);
+
+    electronWindow.on( "move", (event: any) => {
+      const bounds = event.sender.getBounds();
+
+      if (this.$refs.display) {
+        const rect = this.$refs.display.getBoundingClientRect();
+        const x = rect.left;
+        const y = rect.top;
+
+        const moveX = bounds.x + x;
+        const moveY = bounds.y - y - 21;
+        
+        this.videoService.moveOBSDisplay(displayId, moveX, moveY);
+      }
+    });
+
+    obs.NodeObs.OBS_content_setFocused(displayId, true);
   }
 
   destroyDisplay() {

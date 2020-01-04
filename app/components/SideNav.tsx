@@ -13,6 +13,7 @@ import { AppService } from '../services/app';
 import { $t } from 'services/i18n';
 import NavTools from './NavTools';
 import styles from './SideNav.m.less';
+import { VideoService } from 'services/video';
 
 @Component({})
 export default class SideNav extends Vue {
@@ -23,6 +24,7 @@ export default class SideNav extends Vue {
   @Inject() windowsService: WindowsService;
   @Inject() platformAppsService: PlatformAppsService;
   @Inject() incrementalRolloutService: IncrementalRolloutService;
+  @Inject() videoService: VideoService;
 
   availableChatbotPlatforms = ['twitch', 'mixer', 'youtube'];
 
@@ -79,7 +81,8 @@ export default class SideNav extends Vue {
     }
 
     return (
-      <div class={cx('side-nav', styles.container, { [styles.leftDock]: this.leftDock })}>
+      <div class={cx('side-nav', styles.container, { [styles.leftDock]: this.leftDock })}
+            onClick= {() => this.videoService.setOBSDisplayFocused('test', true)}>
         {pageData.map(page => (
           <div
             class={cx(styles.mainCell, {

@@ -11,7 +11,7 @@ import { SelectionService } from 'services/selection';
 
 const { remote } = electron;
 
-const DISPLAY_ELEMENT_POLLING_INTERVAL = 500;
+const DISPLAY_ELEMENT_POLLING_INTERVAL = 50;
 
 export interface IDisplayOptions {
   sourceId?: string;
@@ -61,6 +61,14 @@ export class Display {
       : obs.ERenderingMode.OBS_MAIN_RENDERING;
 
     const electronWindow = remote.BrowserWindow.fromId(this.electronWindowId);
+
+    electronWindow.on( "focus", (event: any) => {
+      obs.NodeObs.OBS_content_setFocused(this.name, true);
+    });
+
+    electronWindow.on( "blur", (event: any) => {
+      obs.NodeObs.OBS_content_setFocused(this.name, false);
+    });
 
     this.videoService.createOBSDisplay(
       this.electronWindowId,
@@ -113,14 +121,19 @@ export class Display {
 
     const trackingFun = () => {
       const rect = this.getScaledRectangle(element.getBoundingClientRect());
-
       if (
         rect.x !== this.currentPosition.x ||
         rect.y !== this.currentPosition.y ||
         rect.width !== this.currentPosition.width ||
         rect.height !== this.currentPosition.height
       ) {
-        this.move(rect.x, rect.y);
+        const electronWindow = remote.BrowserWindow.fromId(this.electronWindowId);
+        const bounds = electronWindow.getBounds();
+
+        const moveX = bounds.x + element.getBoundingClientRect().left;
+        const moveY = bounds.y - element.getBoundingClientRect().top - 21;
+
+        this.move(moveX, moveY);
         this.resize(rect.width, rect.height);
       }
     };
@@ -135,8 +148,8 @@ export class Display {
     return {
       x: rect.left * factor,
       y: rect.top * factor,
-      width: rect.width * factor,
-      height: rect.height * factor,
+      width: rect.width,// * factor,
+      height: rect.height,// * factor,
     };
   }
 
@@ -198,6 +211,10 @@ export class Display {
     // This function does nothing if we aren't drawing the UI
     if (!this.drawingUI) return;
     this.videoService.setOBSDisplayDrawGuideLines(this.name, enabled);
+  }
+
+  setFocused(focus: boolean) {
+    this.videoService.setOBSDisplayFocused(this.name, focus);
   }
 }
 
@@ -317,5 +334,9 @@ export class VideoService extends Service {
 
   setOBSDisplayDrawGuideLines(name: string, drawGuideLines: boolean) {
     obs.NodeObs.OBS_content_setDrawGuideLines(name, drawGuideLines);
+  }
+
+  setOBSDisplayFocused(name:string, focus: boolean) {
+    obs.NodeObs.OBS_content_setFocused(name, focus);
   }
 }

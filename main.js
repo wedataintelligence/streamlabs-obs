@@ -23,7 +23,7 @@ const path = require('path');
 const rimraf = require('rimraf');
 const electronLog = require('electron-log');
 
-const overlay = require('@streamlabs/game-overlay');
+// const overlay = require('@streamlabs/game-overlay');
 
 // We use a special cache directory for running tests
 if (process.env.SLOBS_CACHE_DIR) {
@@ -53,7 +53,7 @@ if (!gotTheLock) {
   const semver = require('semver');
   const windowStateKeeper = require('electron-window-state');
   const pid = require('process').pid;
-  const crashHandler = require('crash-handler');
+  // const crashHandler = require('crash-handler');
 
   app.commandLine.appendSwitch('force-ui-direction', 'ltr');
 
@@ -136,8 +136,8 @@ if (!gotTheLock) {
       crashHandlerLogPath = app.getPath('userData');
     }
 
-    crashHandler.startCrashHandler(app.getAppPath(), process.env.SLOBS_VERSION, isDevMode.toString(), crashHandlerLogPath);
-    crashHandler.registerProcess(pid, false);
+    // crashHandler.startCrashHandler(app.getAppPath(), process.env.SLOBS_VERSION, isDevMode.toString(), crashHandlerLogPath);
+    // crashHandler.registerProcess(pid, false);
 
     const Raven = require('raven');
 
@@ -228,10 +228,10 @@ if (!gotTheLock) {
     });
 
     // Initialize the keylistener
-    require('node-libuiohook').startHook();
+    // require('node-libuiohook').startHook();
 
     mainWindow.on('closed', () => {
-      require('node-libuiohook').stopHook();
+      // require('node-libuiohook').stopHook();
       session.defaultSession.flushStorageData();
       session.defaultSession.cookies.flushStore(() => app.quit());
     });
@@ -257,7 +257,7 @@ if (!gotTheLock) {
       }
     });
 
-    if (process.env.SLOBS_PRODUCTION_DEBUG) openDevTools();
+    openDevTools();
 
     // simple messaging system for services between windows
     // WARNING! the child window use synchronous requests and will be frozen
@@ -523,16 +523,16 @@ if (!gotTheLock) {
     if (contents.isDestroyed()) return;
 
     contents.on('paint', (event, dirty, image) => {
-      if (
-        overlay.paintOverlay(
-          overlayId,
-          image.getSize().width,
-          image.getSize().height,
-          image.getBitmap(),
-        ) === 0
-      ) {
-        contents.invalidate();
-      }
+      // if (
+      //   overlay.paintOverlay(
+      //     overlayId,
+      //     image.getSize().width,
+      //     image.getSize().height,
+      //     image.getBitmap(),
+      //   ) === 0
+      // ) {
+      //   contents.invalidate();
+      // }
     });
   });
 }
