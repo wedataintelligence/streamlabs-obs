@@ -101,7 +101,7 @@ export class DragHandler {
     this.baseHeight = this.videoService.baseHeight;
     this.displaySize = options.displaySize;
     this.displayOffset = options.displayOffset;
-    this.scaleFactor = this.windowsService.state.main.scaleFactor;
+    this.scaleFactor = this.windowsService.getMainWindowDisplay().scaleFactor;
     this.snapDistance =
       (this.renderedSnapDistance * this.scaleFactor * this.baseWidth) / this.displaySize.x;
 

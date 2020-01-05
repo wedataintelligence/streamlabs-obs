@@ -63,6 +63,7 @@ export default class StudioEditor extends Vue {
 
   convertBackendEvent (event: any): any {
     const rect =  this.$refs.display.getBoundingClientRect();
+
     return {
       altKey: event.altKey,
       ctrlKey: event.ctrlKey,
@@ -266,9 +267,8 @@ export default class StudioEditor extends Vue {
   handleMouseMove(event: MouseEvent) {
     const mousePosX = event.offsetX - this.renderedOffsetX;
     const mousePosY = event.offsetY - this.renderedOffsetY;
+    const factor = this.windowsService.getMainWindowDisplay().scaleFactor;
 
-    // const factor = this.windowsService.state.main.scaleFactor;
-    const factor = 1;
     const converted = this.convertScalarToBaseSpace(mousePosX * factor, mousePosY * factor);
 
     if (this.resizeRegion) {
@@ -467,8 +467,8 @@ export default class StudioEditor extends Vue {
   // Takes the given mouse event, and determines if it is
   // over the given box in base resolution space.
   isOverBox(event: MouseEvent, x: number, y: number, width: number, height: number) {
-    // const factor = this.windowsService.state.main.scaleFactor;
-    const factor = 1;
+    const factor = this.windowsService.getMainWindowDisplay().scaleFactor;
+
     const mouse = this.convertVectorToBaseSpace(event.offsetX * factor, event.offsetY * factor);
 
     const box = { x, y, width, height };
@@ -591,8 +591,8 @@ export default class StudioEditor extends Vue {
 
   generateResizeRegionsForItem(item: SceneItem): IResizeRegion[] {
     const renderedRegionRadius = 5;
-    // const factor = this.windowsService.state.main.scaleFactor;
-    const factor = 1;
+    const factor = this.windowsService.getMainWindowDisplay().scaleFactor;
+
     const regionRadius = (renderedRegionRadius * factor * this.baseWidth) / this.renderedWidth;
     const width = regionRadius * 2;
     const height = regionRadius * 2;

@@ -190,20 +190,18 @@ export class WindowsService extends StatefulService<IWindowsState> {
 
     this.updateScaleFactor('main');
     this.updateScaleFactor('child');
-    this.windows.main.on('move', (event: any) => {
-      this.updateScaleFactor('main');
-    });
+    this.windows.main.on('move', () => this.updateScaleFactor('main'));
     this.windows.child.on('move', () => this.updateScaleFactor('child'));
   }
 
   @throttle(500)
   private updateScaleFactor(windowId: string) {
-    // console.log('updateScaleFactor: ' + windowId);
     const window = this.windows[windowId];
     if (window && !window.isDestroyed()) {
       const bounds = window.getBounds();
       const currentDisplay = electron.remote.screen.getDisplayMatching(bounds);
-      this.UPDATE_SCALE_FACTOR(windowId, currentDisplay.scaleFactor);
+      console.log('Display factor: ' + currentDisplay.scaleFactor);
+      // this.UPDATE_SCALE_FACTOR(windowId, currentDisplay.scaleFactor);
     }
   }
 
@@ -240,7 +238,7 @@ export class WindowsService extends StatefulService<IWindowsState> {
   }
 
   getMainWindowDisplay() {
-    const window = this.windows.main;
+    const window = this.windows.child;
     const bounds = window.getBounds();
     return electron.remote.screen.getDisplayMatching(bounds);
   }
