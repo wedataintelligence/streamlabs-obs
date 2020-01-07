@@ -62,6 +62,9 @@ export default class StudioEditor extends Vue {
   };
 
   convertBackendEvent (event: any): any {
+    if (!this.$refs.display)
+      return null;
+
     const rect =  this.$refs.display.getBoundingClientRect();
 
     return {
@@ -82,31 +85,41 @@ export default class StudioEditor extends Vue {
       {
         type: 0,
         callback: (event: any) => {
-          this.handleMouseDown(this.convertBackendEvent(event) as MouseEvent);
+          const translatedEvent = this.convertBackendEvent(event);
+          if (translatedEvent)
+            this.handleMouseDown(translatedEvent as MouseEvent);
         }
       },
       {
         type: 1,
         callback: (event: any) => {
-          this.handleMouseUp(this.convertBackendEvent(event) as MouseEvent);
+          const translatedEvent = this.convertBackendEvent(event);
+          if (translatedEvent)
+            this.handleMouseUp(translatedEvent as MouseEvent);
         }
       },
       {
         type: 2,
         callback: (event: any) => {
-          this.handleMouseMove(this.convertBackendEvent(event) as MouseEvent);
+          const translatedEvent = this.convertBackendEvent(event);
+          if (translatedEvent)
+            this.handleMouseMove(translatedEvent as MouseEvent);
         }
       },
       {
         type: 3,
         callback: (event: any) => {
-          this.handleMouseMove(this.convertBackendEvent(event) as MouseEvent);
+          const translatedEvent = this.convertBackendEvent(event);
+          if (translatedEvent)
+            this.handleMouseMove(translatedEvent as MouseEvent);
         }
       },
       {
         type: 4,
         callback: (event: any) => {
-          this.handleMouseEnter(this.convertBackendEvent(event) as MouseEvent);
+          const translatedEvent = this.convertBackendEvent(event);
+          if (translatedEvent)
+            this.handleMouseEnter(translatedEvent as MouseEvent);
         }
       }
     ]);

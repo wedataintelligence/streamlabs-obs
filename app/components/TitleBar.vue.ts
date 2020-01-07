@@ -7,12 +7,14 @@ import { StreamingService } from 'services/streaming';
 import Utils from 'services/utils';
 import { $t } from 'services/i18n';
 import { VideoService } from 'services/video';
+import { WindowsService } from 'services/windows';
 
 @Component({})
 export default class TitleBar extends Vue {
   @Inject() customizationService: CustomizationService;
   @Inject() streamingService: StreamingService;
   @Inject() videoService: VideoService;
+  @Inject() windowsService: WindowsService;
 
   @Prop() title: string;
 
@@ -47,6 +49,9 @@ export default class TitleBar extends Vue {
   }
 
   handleMouseDown() {
-    this.videoService.setOBSDisplayFocused('test', true);
+    if (Utils.isMainWindow())
+      this.videoService.setOBSDisplayFocused(this.windowsService.mainWindowId, true);
+    else
+      this.videoService.setOBSDisplayFocused(this.windowsService.childWIndowId, true);
   }
 }

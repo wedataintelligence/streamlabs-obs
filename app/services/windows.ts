@@ -180,7 +180,9 @@ export class WindowsService extends StatefulService<IWindowsState> {
 
   windowUpdated = new Subject<{ windowId: string; options: IWindowOptions }>();
   windowDestroyed = new Subject<string>();
-  private windows: Dictionary<Electron.BrowserWindow> = {};
+  windows: Dictionary<Electron.BrowserWindow> = {};
+  mainWindowId: string = '';
+  childWIndowId: string = '';
 
   init() {
     const windows = BrowserWindow.getAllWindows();
@@ -238,7 +240,7 @@ export class WindowsService extends StatefulService<IWindowsState> {
   }
 
   getMainWindowDisplay() {
-    const window = this.windows.child;
+    const window = this.windows.main;
     const bounds = window.getBounds();
     return electron.remote.screen.getDisplayMatching(bounds);
   }

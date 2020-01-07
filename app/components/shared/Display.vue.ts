@@ -53,15 +53,17 @@ export default class Display extends TsxComponent<DisplayProps> {
       paddingColor: this.paddingColor,
       renderingMode: this.renderingMode,
     });
+
+    if (!this.sourceId)
+      this.windowsService.mainWindowId = displayId;
+    else
+      this.windowsService.childWIndowId = displayId;
+    
     this.display.setShoulddrawUI(this.drawUI);
 
     this.display.onOutputResize(region => {
       this.$emit('outputResize', region);
     });
-
-    if (!this.sourceId) {
-      
-    }
 
     this.display.trackElement(this.$refs.display);
 
@@ -81,8 +83,7 @@ export default class Display extends TsxComponent<DisplayProps> {
         this.videoService.moveOBSDisplay(displayId, moveX, moveY);
       }
     });
-
-    obs.NodeObs.OBS_content_setFocused(displayId, true);
+    // obs.NodeObs.OBS_content_setFocused(displayId, true);
   }
 
   destroyDisplay() {

@@ -31,6 +31,7 @@ import electron from 'electron';
 import ResizeBar from 'components/shared/ResizeBar.vue';
 import FacebookMerge from 'components/pages/FacebookMerge';
 import { VideoService } from 'services/video';
+import Utils from 'services/utils';
 
 @Component({
   components: {
@@ -201,7 +202,10 @@ export default class Main extends Vue {
   }
 
   handleMouseDown () {
-    this.videoService.setOBSDisplayFocused('test', true);
+    if (Utils.isMainWindow())
+      this.videoService.setOBSDisplayFocused(this.windowsService.mainWindowId, true);
+    else
+      this.videoService.setOBSDisplayFocused(this.windowsService.childWIndowId, true);
   }
 
   onResizeStopHandler(offset: number) {

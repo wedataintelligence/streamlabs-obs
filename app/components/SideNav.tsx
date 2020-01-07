@@ -82,7 +82,7 @@ export default class SideNav extends Vue {
 
     return (
       <div class={cx('side-nav', styles.container, { [styles.leftDock]: this.leftDock })}
-            onClick= {() => this.videoService.setOBSDisplayFocused('test', true)}>
+            onClick= {() => this.videoService.setOBSDisplayFocused(this.windowsService.mainWindowId, true)}>
         {pageData.map(page => (
           <div
             class={cx(styles.mainCell, {

@@ -63,11 +63,13 @@ export class Display {
     const electronWindow = remote.BrowserWindow.fromId(this.electronWindowId);
 
     electronWindow.on( "focus", (event: any) => {
-      obs.NodeObs.OBS_content_setFocused(this.name, true);
+      if (!this.displayDestroyed)
+        obs.NodeObs.OBS_content_setFocused(this.name, true);
     });
 
     electronWindow.on( "blur", (event: any) => {
-      obs.NodeObs.OBS_content_setFocused(this.name, false);
+      if (!this.displayDestroyed)
+        obs.NodeObs.OBS_content_setFocused(this.name, false);
     });
 
     this.videoService.createOBSDisplay(
