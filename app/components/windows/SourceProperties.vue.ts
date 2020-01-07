@@ -16,6 +16,7 @@ import electron from 'electron';
 import { ErrorField } from 'vee-validate';
 import { CustomizationService } from 'services/customization';
 import { EditorCommandsService } from 'services/editor-commands';
+import { VideoService } from 'services/video';
 
 @Component({
   components: {
@@ -32,6 +33,7 @@ export default class SourceProperties extends Vue {
   @Inject() windowsService: WindowsService;
   @Inject() customizationService: CustomizationService;
   @Inject() private editorCommandsService: EditorCommandsService;
+  @Inject() videoService: VideoService;
 
   sourceId = this.windowsService.getChildWindowQueryParams().sourceId;
   source = this.sourcesService.getSource(this.sourceId);
@@ -97,5 +99,9 @@ export default class SourceProperties extends Vue {
 
   onValidateHandler(errors: ErrorField[]) {
     this.hasErrors = !!errors.length;
+  }
+
+  handleMouseDown () {
+    this.videoService.setOBSDisplayFocused(this.windowsService.childWIndowId, true);
   }
 }

@@ -69,19 +69,25 @@ export default class Display extends TsxComponent<DisplayProps> {
 
     const electronWindow = remote.BrowserWindow.fromId(remote.getCurrentWindow().id);
 
-    electronWindow.on( "move", (event: any) => {
-      const bounds = event.sender.getBounds();
+    const moveFnc = () => {
+      const bounds = electronWindow.getBounds();
 
       if (this.$refs.display) {
         const rect = this.$refs.display.getBoundingClientRect();
         const x = rect.left;
         const y = rect.top;
-
+  
         const moveX = bounds.x + x;
         const moveY = bounds.y - y - 21;
         
         this.videoService.moveOBSDisplay(displayId, moveX, moveY);
       }
+    };
+
+    moveFnc();
+
+    electronWindow.on( "move", (event: any) => {
+      moveFnc();
     });
     // obs.NodeObs.OBS_content_setFocused(displayId, true);
   }

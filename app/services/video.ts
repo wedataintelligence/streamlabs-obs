@@ -123,19 +123,19 @@ export class Display {
 
     const trackingFun = () => {
       const rect = this.getScaledRectangle(element.getBoundingClientRect());
+      const electronWindow = remote.BrowserWindow.fromId(this.electronWindowId);
+      const bounds = electronWindow.getBounds();
+
+      const positionX = bounds.x + element.getBoundingClientRect().left;
+      const positionY = bounds.y - element.getBoundingClientRect().top - 21;
+
       if (
-        rect.x !== this.currentPosition.x ||
-        rect.y !== this.currentPosition.y ||
+        positionX !== this.currentPosition.x ||
+        positionY !== this.currentPosition.y ||
         rect.width !== this.currentPosition.width ||
         rect.height !== this.currentPosition.height
       ) {
-        const electronWindow = remote.BrowserWindow.fromId(this.electronWindowId);
-        const bounds = electronWindow.getBounds();
-
-        const moveX = bounds.x + element.getBoundingClientRect().left;
-        const moveY = bounds.y - element.getBoundingClientRect().top - 21;
-
-        this.move(moveX, moveY);
+        this.move(positionX, positionY);
         this.resize(rect.width, rect.height);
       }
     };
