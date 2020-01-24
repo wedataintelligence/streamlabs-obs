@@ -1261,12 +1261,6 @@
     "@sentry/types" "5.4.0"
     tslib "^1.9.3"
 
-"@streamlabs/game-overlay@https://obs-studio-deployment.s3-us-west-2.amazonaws.com/game-overlay-vv0.0.38electron6.tar.gz":
-  version "0.0.38-electron6"
-  resolved "https://obs-studio-deployment.s3-us-west-2.amazonaws.com/game-overlay-vv0.0.38electron6.tar.gz#03db4808bb9c80ec07b653c8658ff3f0634a48ef"
-  dependencies:
-    nan "^2.14.0"
-
 "@types/archiver@2.1.3":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@types/archiver/-/archiver-2.1.3.tgz#3370bcfd205dcdef022531f0ae4c1dbce37912ca"
@@ -6717,11 +6711,6 @@ nan@^2.12.1:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
   integrity sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
 
-nan@^2.14.0:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
-  integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
-
 nan@^2.9.2:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
@@ -6882,11 +6871,6 @@ node-releases@^1.1.19:
   integrity sha512-SH/B4WwovHbulIALsQllAVwqZZD1kPmKCqrhGfR29dXjLAVZMHvBjD3S6nL9D/J9QkmZ1R92/0wCMDKXUUvyyA==
   dependencies:
     semver "^5.3.0"
-
-node-win32-np@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/node-win32-np/-/node-win32-np-1.0.6.tgz#761237777e8b222ef4dba3a2b622b7a53d2b4b97"
-  integrity sha512-SVLiJ07vkLEpuQpJAh9HbUHlmUbpbtoini9V9aBNs+VbJCJl80nVSxmy+aQW34fQxLW60z35hi9ePpqJT6Hekw==
 
 nopt@^4.0.1:
   version "4.0.1"
@@ -7049,9 +7033,9 @@ object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-"obs-studio-node@https://obsstudionodes3.streamlabs.com/obs-studio-node-v0.5.37-iojs-v6.0.3-release.tar.gz":
+"obs-studio-node@https://obsstudionodes3.streamlabs.com/obs-studio-node-0.5.104-iojs-v6.0.3-osx-release.tar.gz":
   version "0.3.99"
-  resolved "https://obsstudionodes3.streamlabs.com/obs-studio-node-v0.5.37-iojs-v6.0.3-release.tar.gz#8d17624f9b0a78c320e4d32e2583bdd80627c21e"
+  resolved "https://obsstudionodes3.streamlabs.com/obs-studio-node-0.5.104-iojs-v6.0.3-osx-release.tar.gz#2bcc855e2f7265b694d1f9ae2dc3bdbf9f8ec090"
 
 observable-to-promise@^0.5.0:
   version "0.5.0"
