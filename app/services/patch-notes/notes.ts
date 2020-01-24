@@ -1,17 +1,13 @@
 import { IPatchNotes } from '.';
 
 export const notes: IPatchNotes = {
-  version: '0.18.0',
-  title: 'Combined Editor + Live, Selective Recording',
+  version: '0.20.0',
+  title: 'Introducing the Layout Editor',
   showChest: false,
   notes: [
-    "We've combined the Editor and Live tabs into a single tab with all of the same functionality.",
-    'Selective recording allows you to hide certain sources in your recordings that are present in your live stream. Enable it by clicking the icon above the sources list.',
-    'Added dynamic bitrate, an option enabled by default that will automatically adjust your bitrate based on your connection speed to prevent you dropping frames.',
-    'Added a button to open up the Streamlabs dashboard in a web browser.',
-    'Added a recording timer.',
-    'Added search functionality to the settings window.',
-    'Resolved an incompatibility with new drivers for certain webcams.',
+    'Our new Layout Editor feature lets you completely customize the editor tab. Choose what panels you want to see, and where the should go. Complete control is finally here. Click the Layout Editor icon in the bottom left to get started.',
+    "The game capture now has an 'auto' mode that takes the guesswork out of capturing games. It will automatically capture most popular games without need any additional settings.",
+    'Multistream is now available to users logged in via YouTube',
     'Lots of bug and crash fixes',
   ],
 };

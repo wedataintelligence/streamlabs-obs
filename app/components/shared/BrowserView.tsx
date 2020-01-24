@@ -40,7 +40,7 @@ export default class BrowserView extends TsxComponent<BrowserViewProps> {
 
   shutdownSubscription: Subscription;
 
-  mounted() {
+  async mounted() {
     const options = this.props.options ? cloneDeep(this.props.options) : { webPreferences: {} };
 
     // Enforce node integration disabled to prevent security issues
@@ -55,15 +55,15 @@ export default class BrowserView extends TsxComponent<BrowserViewProps> {
     }
 
     this.browserView = new electron.remote.BrowserView(options);
+
     this.$emit('ready', this.browserView);
 
     if (this.props.setLocale) I18nService.setBrowserViewLocale(this.browserView);
 
     this.browserView.webContents.on('did-finish-load', () => (this.loading = false));
-
     electron.remote.getCurrentWindow().addBrowserView(this.browserView);
 
-    this.browserView.webContents.loadURL(this.props.src);
+    await this.loadUrl();
 
     this.resizeInterval = window.setInterval(() => {
       this.checkResize();
@@ -79,7 +79,7 @@ export default class BrowserView extends TsxComponent<BrowserViewProps> {
     electron.remote.getCurrentWindow().removeBrowserView(this.browserView);
     this.browserView.destroy();
     clearInterval(this.resizeInterval);
-    this.shutdownSubscription.unsubscribe();
+    this.shutdownSubscription && this.shutdownSubscription.unsubscribe();
   }
 
   get hideStyleBlockers() {
@@ -113,8 +113,16 @@ export default class BrowserView extends TsxComponent<BrowserViewProps> {
   }
 
   @Watch('theme')
-  refreshBrowser() {
-    this.browserView.webContents.loadURL(this.props.src);
+  async loadUrl() {
+    try {
+      await this.browserView.webContents.loadURL(this.props.src);
+    } catch (e) {
+      // ignore some common errors
+      // that happen when the window has been closed before BrowserView accomplished the request
+      if (e.code === 'ERR_ABORTED') return;
+      if (e.message.match(/\(\-3\) loading/)) return;
+      throw e;
+    }
   }
 
   private rectChanged(rect: { left: number; top: number; width: number; height: number }) {

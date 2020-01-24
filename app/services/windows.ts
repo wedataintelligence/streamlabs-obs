@@ -22,6 +22,7 @@ import Troubleshooter from 'components/windows/Troubleshooter.vue';
 import Blank from 'components/windows/Blank.vue';
 import ManageSceneCollections from 'components/windows/ManageSceneCollections.vue';
 import RecentEvents from 'components/windows/RecentEvents.vue';
+import GameOverlayEventFeed from 'components/windows/GameOverlayEventFeed';
 import Projector from 'components/windows/Projector.vue';
 import MediaGallery from 'components/windows/MediaGallery.vue';
 import PlatformAppPopOut from 'components/windows/PlatformAppPopOut.vue';
@@ -52,7 +53,7 @@ import Credits from 'components/widgets/Credits.vue';
 import EventList from 'components/widgets/EventList.vue';
 import TipJar from 'components/widgets/TipJar.vue';
 import SponsorBanner from 'components/widgets/SponsorBanner.vue';
-import MediaShare from 'components/widgets/MediaShare.vue';
+import MediaShare from 'components/widgets/MediaShare';
 import AlertBox from 'components/widgets/AlertBox.vue';
 import SpinWheel from 'components/widgets/SpinWheel.vue';
 
@@ -95,6 +96,7 @@ export function getComponents() {
     PerformanceMetrics,
     BrowserSourceInteraction,
     EventFilterMenu,
+    GameOverlayEventFeed,
     AdvancedStatistics,
     BitGoal,
     DonationGoal,

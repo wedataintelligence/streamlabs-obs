@@ -1,7 +1,8 @@
 <template>
   <modal-layout :show-controls="false" :customControls="true">
     <div slot="content">
-      <div v-if="infoLoading"><spinner/></div>
+      <h4 v-if="windowHeading">{{ windowHeading }}</h4>
+      <div v-if="infoLoading"><spinner /></div>
       <div v-if="infoError && !infoLoading" class="warning">
         {{ $t('There was an error fetching your channel information.  You can try') }}
         <a class="description-link" @click="populateInfo">{{
@@ -13,11 +14,11 @@
       </div>
       <validated-form name="editStreamForm" ref="form" v-if="!infoLoading && !infoError">
         <div class="pages-warning" v-if="isFacebook && !hasPages">
-          {{ $t("It looks like you don't have any Pages. Head to ") }}
+          <i class="fab fa-facebook" />
+          {{ $t('You must create a Facebook gaming page to go live.') }}
           <a class="description-link" @click="openFBPageCreateLink">{{
-            $t('Facebook Page Creation')
+            $t('Create Page')
           }}</a>
-          {{ $t(' to create a page, and then try again.') }}
         </div>
         <h-form-group
           v-if="isFacebook && hasPages && !midStreamMode"
@@ -131,13 +132,30 @@
 <style lang="less" scoped>
 @import '../../styles/index';
 
-.pages-warning,
 .update-warning {
   .warning();
 }
 
+.pages-warning {
+  .radius();
+
+  height: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background-color: var(--teal-semi);
+  align-items: center;
+  color: var(--teal);
+  margin-bottom: 16px;
+
+  a {
+    color: var(--teal);
+  }
+}
+
 .description-link {
   text-decoration: underline;
+  font-weight: 600;
 }
 
 .edit-stream-info-option-desc {

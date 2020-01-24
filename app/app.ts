@@ -1,5 +1,6 @@
 import { I18nService, $t } from 'services/i18n';
 
+// eslint-disable-next-line
 window['eval'] = global.eval = () => {
   throw new Error('window.eval() is disabled for security');
 };
@@ -213,7 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
       locale: i18nService.state.locale,
       fallbackLocale: i18nService.getFallbackLocale(),
       messages: i18nService.getLoadedDictionaries(),
-      silentTranslationWarn: true,
+      missing: (language: string, key: string) => {
+        if (isProduction) return;
+        console.error(`Missing translation found for ${language} -- "${key}"`);
+      },
     });
     I18nService.setVuei18nInstance(i18n);
 
@@ -250,9 +254,6 @@ electronLog.catchErrors({ onError: e => electronLog.log(`from ${Utils.getWindowI
 // override console.error
 const consoleError = console.error;
 console.error = function(...args: any[]) {
-  // TODO: Suppress N-API error until we upgrade electron to v4.x
-  if (/N\-API is an experimental feature/.test(args[0])) return;
-
   if (Utils.isDevMode()) ipcRenderer.send('showErrorAlert');
   writeErrorToLog(...args);
   consoleError.call(console, ...args);

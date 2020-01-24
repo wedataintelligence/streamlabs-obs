@@ -29,34 +29,33 @@ export default class YoutubeStreamStatus extends TsxComponent {
   }
 
   get progressInfo(): { msg: string; progress: number } {
-    let dictionary: { [key in TYoutubeLifecycleStep]: { msg: string; progress: number } };
-    dictionary = {
+    const dictionary: { [key in TYoutubeLifecycleStep]: { msg: string; progress: number } } = {
       idle: {
         msg: '',
         progress: 0,
       },
       waitForStreamToBeActive: {
-        msg: $t('Waiting for Youtube to start receiving the video...'),
+        msg: $t('Waiting for YouTube to receive the video signal...'),
         progress: 0.1,
       },
       transitionBroadcastToTesting: {
-        msg: $t('Start testing the broadcast...'),
+        msg: $t('Testing your broadcast...'),
         progress: 0.3,
       },
       waitForTesting: {
-        msg: $t('Wait testing to be finished...'),
+        msg: $t('Finalizing broadcast testing...'),
         progress: 0.4,
       },
       transitionBroadcastToActive: {
-        msg: $t('Publish the broadcast to the channel...'),
+        msg: $t('Publishing to your YouTube channel...'),
         progress: 0.5,
       },
       waitForBroadcastToBeLive: {
-        msg: $t('Waiting broadcast to be published...'),
+        msg: $t('Waiting for broadcast to be published...'),
         progress: 0.6,
       },
       live: {
-        msg: $t('Your all set'),
+        msg: $t("You're live!"),
         progress: 1,
       },
     };
@@ -75,8 +74,17 @@ export default class YoutubeStreamStatus extends TsxComponent {
   created() {
     this.streamInfoService.streamInfoChanged.subscribe(async info => {
       if (info.lifecycleStep === 'live') {
+        // stream successfully started
+        // show the success message for couple of seconds and close the window
         await new Promise(r => setTimeout(r, 2000));
         this.windowsService.closeChildWindow();
+        return;
+      }
+
+      if (info.lifecycleStep === 'idle') {
+        // user stopped the stream, close this window
+        this.windowsService.closeChildWindow();
+        return;
       }
     });
   }
@@ -109,7 +117,7 @@ export default class YoutubeStreamStatus extends TsxComponent {
               <h1>{$t('Something went wrong')}</h1>
               <p class={styles.error}>
                 {$t(
-                  `Your stream has been created but we can\'t publish it in your channel. Check your internet connection or go to the `,
+                  "Your stream has been created but we can't publish it in your channel. Check your internet connection or go to the ",
                 )}
                 <a href="javascript:void(0)" onClick={this.goToDashboard}>
                   {$t('stream control page')}

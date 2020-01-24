@@ -173,6 +173,14 @@ export default class AlertBox extends WidgetSettings<IAlertBoxData, AlertBoxServ
     }
   }
 
+  handleUnlimitedModerationDelay(value: boolean) {
+    if (value) {
+      this.wData.settings.moderation_delay = -1;
+    } else {
+      this.wData.settings.moderation_delay = 0;
+    }
+  }
+
   selectAlertType(alertName: string) {
     this.selectedAlert = this.selectedAlert === alertName ? 'general' : alertName;
     this.selectedId = `default-${this.selectedAlert}`;
@@ -208,7 +216,7 @@ export default class AlertBox extends WidgetSettings<IAlertBoxData, AlertBoxServ
     this.selectedId = id;
     // Above is done here with a stop propagation in the input to avoid possible race conditions which would lead to
     // this.selectedVariation potentially being incorrect
-    const field = <HTMLInputElement>this.$refs[`${id}-name-input`][0];
+    const field: HTMLInputElement = this.$refs[`${id}-name-input`][0];
     this.$nextTick(() => field.focus());
   }
 

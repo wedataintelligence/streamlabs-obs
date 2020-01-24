@@ -2,7 +2,6 @@ import { StatefulService, mutation } from './core/stateful-service';
 import { NavigationService } from './navigation';
 import { UserService } from './user';
 import { Inject } from './core/injector';
-import { BrandDeviceService } from 'services/auto-config/brand-device';
 
 type TOnboardingStep =
   | 'Connect'
@@ -19,6 +18,7 @@ interface IOnboardingOptions {
   isOptimize: boolean; // When re-running the optimizer after onboarding
   isSecurityUpgrade: boolean; // When logging in, display a special message
   // about our security upgrade.
+  isHardware: boolean; // When configuring capture defaults
 }
 
 interface IOnboardingServiceState {
@@ -42,6 +42,7 @@ export class OnboardingService extends StatefulService<IOnboardingServiceState> 
       isLogin: false,
       isOptimize: false,
       isSecurityUpgrade: false,
+      isHardware: false,
     },
   };
 
@@ -49,7 +50,6 @@ export class OnboardingService extends StatefulService<IOnboardingServiceState> 
 
   @Inject() navigationService: NavigationService;
   @Inject() userService: UserService;
-  @Inject() brandDeviceService: BrandDeviceService;
 
   @mutation()
   SET_OPTIONS(options: Partial<IOnboardingOptions>) {
@@ -67,6 +67,7 @@ export class OnboardingService extends StatefulService<IOnboardingServiceState> 
       isLogin: false,
       isOptimize: false,
       isSecurityUpgrade: false,
+      isHardware: false,
       ...options,
     };
 

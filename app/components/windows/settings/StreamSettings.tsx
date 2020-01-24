@@ -1,6 +1,5 @@
 import { Component } from 'vue-property-decorator';
 import { Inject } from 'services/core/injector';
-import cx from 'classnames';
 import { $t } from 'services/i18n';
 import { ISettingsSubCategory } from 'services/settings';
 import TsxComponent from 'components/tsx-component';
@@ -9,11 +8,23 @@ import GenericFormGroups from '../../obs/inputs/GenericFormGroups.vue';
 import { UserService } from 'services/user';
 import styles from './StreamSettings.m.less';
 import PlatformLogo from 'components/shared/PlatformLogo';
+import { RestreamService } from 'services/restream';
+import VFormGroup from 'components/shared/inputs/VFormGroup.vue';
+import { metadata } from 'components/shared/inputs';
+import { NavigationService } from 'services/navigation';
+import { WindowsService } from 'services/windows';
+import { EStreamingState, StreamingService } from 'services/streaming';
+import BrowserView from 'components/shared/BrowserView';
 
-@Component({ components: { GenericFormGroups, PlatformLogo } })
+@Component({ components: { GenericFormGroups, PlatformLogo, BrowserView } })
 export default class StreamSettings extends TsxComponent {
   @Inject() private streamSettingsService: StreamSettingsService;
   @Inject() private userService: UserService;
+  @Inject() private restreamService: RestreamService;
+  @Inject() private navigationService: NavigationService;
+  @Inject() private windowsService: WindowsService;
+  @Inject() private streamingService: StreamingService;
+
   private obsSettings = this.streamSettingsService.getObsStreamSettings();
 
   saveObsSettings(obsSettings: ISettingsSubCategory[]) {
@@ -34,19 +45,44 @@ export default class StreamSettings extends TsxComponent {
   }
 
   get userName() {
-    return this.userService.state.auth.platform.username;
+    return this.userService.platform.username;
   }
 
   get platform() {
-    return this.userService.state.auth.platform.type;
+    return this.userService.platform.type;
   }
 
   get platformName() {
-    return this.platform.charAt(0).toUpperCase() + this.platform.slice(1);
+    return this.formattedPlatformName(this.platform);
+  }
+
+  formattedPlatformName(platform: string) {
+    return platform.charAt(0).toUpperCase() + this.platform.slice(1);
   }
 
   get needToShowWarning() {
     return this.userService.isLoggedIn() && !this.protectedModeEnabled;
+  }
+
+  get canEditSettings() {
+    return this.streamingService.state.streamingStatus === EStreamingState.Offline;
+  }
+
+  get restreamEnabled() {
+    return this.restreamService.state.enabled;
+  }
+
+  set restreamEnabled(enabled: boolean) {
+    this.restreamService.setEnabled(enabled);
+  }
+
+  facebookMerge() {
+    this.navigationService.navigate('FacebookMerge');
+    this.windowsService.closeChildWindow();
+  }
+
+  get restreamRewardsUrl() {
+    return `https://streamlabs.com/multistream-rewards?token=${this.userService.apiToken}`;
   }
 
   render() {
@@ -55,6 +91,20 @@ export default class StreamSettings extends TsxComponent {
         {/* account info */}
         {this.protectedModeEnabled && (
           <div>
+            {this.restreamService.canEnableRestream && (
+              <div class="section">
+                <VFormGroup
+                  vModel={this.restreamEnabled}
+                  metadata={metadata.toggle({
+                    title: $t('Enable Multistream'),
+                    disabled: !this.canEditSettings,
+                    description: $t(
+                      'Multistream allows you to stream to multiple platforms simultaneously.',
+                    ),
+                  })}
+                />
+              </div>
+            )}
             <div class="section flex">
               <div class="margin-right--20">
                 <PlatformLogo platform={this.platform} class={styles.platformLogo} />
@@ -64,13 +114,48 @@ export default class StreamSettings extends TsxComponent {
                 {this.userName} <br />
               </div>
             </div>
-            <div>
-              <a onClick={this.disableProtectedMode}>{$t('Stream to custom ingest')}</a>
-            </div>
+            {this.restreamEnabled && (
+              <div class="section flex">
+                <div class="margin-right--20">
+                  <PlatformLogo platform={'facebook'} class={styles.platformLogo} />
+                </div>
+                {this.userService.state.auth.platforms.facebook ? (
+                  <div>
+                    {$t('Streaming to %{platformName}', { platformName: 'facebook' })} <br />
+                    {this.userService.state.auth.platforms.facebook.username} <br />
+                  </div>
+                ) : (
+                  <div style={{ lineHeight: '42px' }}>
+                    {this.canEditSettings && (
+                      <button onClick={this.facebookMerge} class="button button--facebook">
+                        {$t('Connect')}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+            {this.canEditSettings && (
+              <div>
+                <a onClick={this.disableProtectedMode}>{$t('Stream to custom ingest')}</a>
+              </div>
+            )}
           </div>
         )}
 
-        {/* WARNING message */}
+        {this.restreamService.canEnableRestream && this.protectedModeEnabled && (
+          <BrowserView
+            style={{ height: '330px', marginTop: '16px', marginBottom: '16px' }}
+            src={this.restreamRewardsUrl}
+          />
+        )}
+
+        {/* WARNING messages */}
+        {!this.canEditSettings && (
+          <div class="section section--warning">
+            {$t("You can not change these settings when you're live")}
+          </div>
+        )}
         {this.needToShowWarning && (
           <div class="section section--warning">
             <b>{$t('Warning')}: </b>
@@ -79,14 +164,17 @@ export default class StreamSettings extends TsxComponent {
             )}
             <br />
             <br />
-            <button class="button button--warn" onClick={this.restoreDefaults}>
-              {$t('Use recommended settings')}
-            </button>
+
+            {this.canEditSettings && (
+              <button class="button button--warn" onClick={this.restoreDefaults}>
+                {$t('Use recommended settings')}
+              </button>
+            )}
           </div>
         )}
 
         {/* OBS settings */}
-        {!this.protectedModeEnabled && (
+        {!this.protectedModeEnabled && this.canEditSettings && (
           <GenericFormGroups value={this.obsSettings} onInput={this.saveObsSettings} />
         )}
       </div>

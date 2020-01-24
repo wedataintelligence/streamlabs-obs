@@ -132,7 +132,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
   }
 
   get oauthToken() {
-    return this.userService.platform.token;
+    return this.userService.state.auth.platforms.facebook.token;
   }
 
   get activeToken() {
@@ -158,14 +158,15 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
 
   async fetchActivePage() {
     await this.fetchPages();
-    return platformAuthorizedRequest<{ data: IFacebookPage[] }>(`${this.apiBase}/me/accounts`).then(
-      async json => {
-        const pageId = this.userService.platform.channelId || this.state.facebookPages.page_id;
-        const activePage = json.data.filter(page => pageId === page.id)[0] || json.data[0];
-        this.userService.updatePlatformChannelId(pageId);
-        this.SET_ACTIVE_PAGE(activePage);
-      },
-    );
+    return platformAuthorizedRequest<{ data: IFacebookPage[] }>(
+      'facebook',
+      `${this.apiBase}/me/accounts`,
+    ).then(async json => {
+      const pageId = this.userService.platform.channelId || this.state.facebookPages.page_id;
+      const activePage = json.data.filter(page => pageId === page.id)[0] || json.data[0];
+      this.userService.updatePlatformChannelId('facebook', pageId);
+      this.SET_ACTIVE_PAGE(activePage);
+    });
   }
 
   fetchUserInfo() {
@@ -180,6 +181,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
     };
 
     return platformRequest<{ stream_url: string; id: number }>(
+      'facebook',
       {
         url: `${this.apiBase}/${this.state.activePage.id}/live_videos`,
         ...data,
@@ -208,21 +210,23 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
     const url =
       `${this.apiBase}/${this.state.activePage.id}/live_videos?` +
       'fields=status,stream_url,title,description';
-    return platformRequest<{ data: IFacebookLiveVideo[] }>(url, this.activeToken).then(json => {
-      const info =
-        json.data.find((vid: any) => vid.status === 'SCHEDULED_UNPUBLISHED') || json.data[0];
-      if (info && ['SCHEDULED_UNPUBLISHED', 'LIVE_STOPPED'].includes(info.status)) {
-        this.SET_LIVE_VIDEO_ID(info.id);
-        this.SET_STREAM_URL(info.stream_url);
-      } else {
-        this.SET_LIVE_VIDEO_ID(null);
-      }
-      this.emitChannelInfo();
-      return {
-        ...info,
-        facebookPageId: this.state.activePage.id,
-      };
-    });
+    return platformRequest<{ data: IFacebookLiveVideo[] }>('facebook', url, this.activeToken).then(
+      json => {
+        const info =
+          json.data.find((vid: any) => vid.status === 'SCHEDULED_UNPUBLISHED') || json.data[0];
+        if (info && ['SCHEDULED_UNPUBLISHED', 'LIVE_STOPPED'].includes(info.status)) {
+          this.SET_LIVE_VIDEO_ID(info.id);
+          this.SET_STREAM_URL(info.stream_url);
+        } else {
+          this.SET_LIVE_VIDEO_ID(null);
+        }
+        this.emitChannelInfo();
+        return {
+          ...info,
+          facebookPageId: this.state.activePage.id,
+        };
+      },
+    );
   }
 
   emitChannelInfo() {
@@ -234,7 +238,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
     });
   }
 
-  scheduleStream(
+  async scheduleStream(
     scheduledStartTime: string,
     { title, description, game }: IFacebookChanelInfo,
   ): Promise<any> {
@@ -246,7 +250,17 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
       game_specs: { name: game },
       status: 'SCHEDULED_UNPUBLISHED',
     });
-    return platformRequest({ url, body, method: 'POST' }, this.activeToken);
+    try {
+      return await platformRequest('facebook', { url, body, method: 'POST' }, this.activeToken);
+    } catch (e) {
+      if (e?.result?.error?.code === 100) {
+        throw new Error(
+          $t(
+            'Please schedule no further than 7 days in advance and no sooner than 10 minutes in advance.',
+          ),
+        );
+      }
+    }
   }
 
   fetchViewerCount(): Promise<number> {
@@ -254,7 +268,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
 
     const url = `${this.apiBase}/${this.state.liveVideoId}?fields=live_views`;
 
-    return platformRequest<{ live_views: number }>(url, this.activeToken)
+    return platformRequest<{ live_views: number }>('facebook', url, this.activeToken)
       .then(json => json.live_views)
       .catch(() => 0);
   }
@@ -262,13 +276,17 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
   async beforeGoLive(options: IFacebookStartStreamOptions) {
     await this.prepopulateInfo();
     await this.putChannelInfo(options);
-    this.streamSettingsService.setSettings({ platform: 'facebook' });
+    this.streamSettingsService.setSettings({ platform: 'facebook', streamType: 'rtmp_common' });
 
     // This generally happens when a stream was scheduled, or when we
     // fetched an existing stopped or scheduled stream from the API.
     if (this.state.streamUrl) {
       const streamKey = this.state.streamUrl.substr(this.state.streamUrl.lastIndexOf('/') + 1);
-      this.streamSettingsService.setSettings({ key: streamKey, platform: 'facebook' });
+      this.streamSettingsService.setSettings({
+        key: streamKey,
+        platform: 'facebook',
+        streamType: 'rtmp_common',
+      });
       this.SET_STREAM_URL(null);
       return streamKey;
     }
@@ -288,6 +306,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
     await this.postPage(facebookPageId);
     if (this.state.liveVideoId && game) {
       return platformRequest(
+        'facebook',
         {
           url: `${this.apiBase}/${this.state.liveVideoId}`,
           method: 'POST',
@@ -302,6 +321,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
   async searchGames(searchString: string): Promise<IGame[]> {
     if (searchString.length < 2) return;
     return platformAuthorizedRequest<{ data: IGame[] }>(
+      'facebook',
       `${this.apiBase}/v3.2/search?type=game&q=${searchString}`,
     ).then(json => json.data);
   }
@@ -318,7 +338,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
   }
 
   fetchRawPageResponse() {
-    return platformRequest<{ data: IFacebookPage[] }>(`${this.apiBase}/me/accounts`);
+    return platformRequest<{ data: IFacebookPage[] }>('facebook', `${this.apiBase}/me/accounts`);
   }
 
   liveDockEnabled(): boolean {
@@ -354,7 +374,7 @@ export class FacebookService extends StatefulService<IFacebookServiceState>
       body: JSON.stringify({ page_id: pageId, page_type: 'page' }),
     });
     try {
-      fetch(request).then(() => this.userService.updatePlatformChannelId(pageId));
+      fetch(request).then(() => this.userService.updatePlatformChannelId('facebook', pageId));
     } catch {
       console.error(new Error('Could not set Facebook page'));
     }

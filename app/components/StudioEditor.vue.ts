@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import TsxComponent from 'components/tsx-component';
 import { Component } from 'vue-property-decorator';
 import clamp from 'lodash/clamp';
 import { DragHandler } from 'util/DragHandler';
@@ -10,11 +10,14 @@ import { AnchorPoint, AnchorPositions, ScalableRectangle } from 'util/ScalableRe
 import { WindowsService } from 'services/windows';
 import { SelectionService, Selection } from 'services/selection';
 import Display from 'components/shared/Display.vue';
+import StudioModeControls from 'components/StudioModeControls.vue';
 import { TransitionsService } from 'services/transitions';
 import { CustomizationService } from 'services/customization';
 import { v2 } from '../util/vec2';
 import { EditorCommandsService } from 'services/editor-commands';
 import * as obs from '../../obs-api';
+import { ERenderingMode } from '../../obs-api';
+import { TObsFormData } from './obs/inputs/ObsInput';
 
 interface IResizeRegion {
   name: string;
@@ -34,9 +37,9 @@ interface IResizeOptions {
 }
 
 @Component({
-  components: { Display },
+  components: { Display, StudioModeControls },
 })
-export default class StudioEditor extends Vue {
+export default class StudioEditor extends TsxComponent {
   @Inject() private scenesService: ScenesService;
   @Inject() private windowsService: WindowsService;
   @Inject() private videoService: VideoService;
@@ -56,9 +59,15 @@ export default class StudioEditor extends Vue {
   currentY: number;
   isCropping: boolean;
   canDrag = true;
+  sizeCheckInterval: number;
+  stacked = false; // If the studio mode displays are horizontally or vertically oriented
+  verticalPlaceholder = false;
+  showDisplay = true;
 
   $refs: {
     display: HTMLDivElement;
+    studioModeContainer: HTMLDivElement; // Holds extra display for studio mode
+    placeholder: HTMLDivElement; // Holds placeholder image while resizing
   };
 
   convertBackendEvent (event: any): any {
@@ -81,6 +90,20 @@ export default class StudioEditor extends Vue {
   }
 
   mounted() {
+    this.sizeCheckInterval = window.setInterval(() => {
+      if (this.$refs.studioModeContainer) {
+        const { clientWidth, clientHeight } = this.$refs.studioModeContainer;
+        this.showDisplay = clientHeight > 50;
+        if (this.studioMode) {
+          this.stacked = clientWidth / clientHeight <= 16 / 9;
+        }
+      }
+      if (!this.displayEnabled && !this.performanceMode && this.$refs.placeholder) {
+        const { clientWidth, clientHeight } = this.$refs.placeholder;
+        this.verticalPlaceholder = clientWidth / clientHeight < 16 / 9;
+      }
+    }, 1000);
+
     obs.NodeObs.RegisterMouseEventsCallbacks([
       {
         type: 0,
@@ -124,6 +147,25 @@ export default class StudioEditor extends Vue {
       }
     ]);
   }
+
+  destroyed() {
+    clearInterval(this.sizeCheckInterval);
+  }
+
+  get performanceMode() {
+    return this.customizationService.state.performanceMode;
+  }
+
+  enablePreview() {
+    this.customizationService.setSettings({ performanceMode: false });
+  }
+
+  get displayEnabled() {
+    return (
+      !this.windowsService.state.main.hideStyleBlockers && !this.performanceMode && this.showDisplay
+    );
+  }
+
 
   onOutputResize(region: IRectangle) {
     this.renderedWidth = region.width;

@@ -53,7 +53,7 @@ export default class SideNav extends Vue {
   }
 
   get appStoreVisible() {
-    return this.platformAppsService.state.storeVisible;
+    return this.userService.isLoggedIn() && this.platformAppsService.state.storeVisible;
   }
 
   get chatbotVisible() {
@@ -93,9 +93,6 @@ export default class SideNav extends Vue {
             title={page.title}
           >
             <i class={page.icon} />
-            {page.target === 'BrowseOverlays' && (
-              <div class={cx(styles.badge, styles.newBadge)}>New</div>
-            )}
           </div>
         ))}
         {this.platformAppsService.enabledApps.length > 0 && <AppsNav />}

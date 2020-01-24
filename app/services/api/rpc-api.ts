@@ -127,10 +127,12 @@ export abstract class RpcApi extends Service {
     // if both resource and method exist
     // execute request and record all mutations to the buffer
     if (fetchMutations) this.startBufferingMutations();
+    /* eslint-disable */
     const payload =
       typeof resource[methodName] === 'function'
         ? resource[methodName].apply(resource, args)
         : resource[methodName];
+    /* eslint-enable */
     const response = this.serializePayload(resource, payload, request);
     if (fetchMutations) response.mutations = this.stopBufferingMutations();
     return response;
@@ -293,12 +295,14 @@ export abstract class RpcApi extends Service {
   }
 
   /**
-   * The promise that the client has been executed is resolved/rejected
+   * The promise that the client has executed is resolved/rejected
    * Send this conformation back to the client
    */
   private sendPromiseMessage(info: { isRejected: boolean; promiseId: string; data: any }) {
     // serialize errors
-    const serializedData = info.isRejected ? { message: info.data.message } : info.data;
+    const serializedData = info.isRejected
+      ? { message: info.data.message, ...info.data }
+      : info.data;
 
     this.serviceEvent.next(
       this.jsonrpc.createEvent({
