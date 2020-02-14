@@ -84,7 +84,6 @@ export interface ISourceAddOptions<TPropertiesManagerSettings = Dictionary<any>>
   isTemporary?: boolean;
 }
 
-// MAC-TODO: Refactor into shared and windows-only
 export type TSourceType =
   | 'image_source'
   | 'color_source'
@@ -110,7 +109,8 @@ export type TSourceType =
   | 'coreaudio_output_capture'
   | 'av_capture_input'
   | 'display_capture'
-  | 'audio_line';
+  | 'audio_line'
+  | 'syphon-input';
 
 // Register new properties managers here
 export type TPropertiesManager = 'default' | 'widget' | 'streamlabels' | 'platformApp' | 'replay';

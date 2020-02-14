@@ -1,11 +1,18 @@
 import { Node } from './node';
 import { HotkeysNode } from './hotkeys';
-import { SourcesService, TSourceType, TPropertiesManager } from 'services/sources';
+import {
+  SourcesService,
+  TSourceType,
+  TPropertiesManager,
+  macSources,
+  windowsSources,
+} from 'services/sources';
 import { AudioService } from 'services/audio';
 import { Inject } from '../../core/injector';
 import * as obs from '../../../../obs-api';
 import { ScenesService } from 'services/scenes';
 import defaultTo from 'lodash/defaultTo';
+import { byOS, OS } from 'util/operating-systems';
 
 interface ISchema {
   items: ISourceInfo[];
@@ -41,51 +48,6 @@ export interface ISourceInfo {
   propertiesManager?: TPropertiesManager;
   propertiesManagerSettings?: Dictionary<any>;
 }
-
-// MAC-TODO: Move these elsewhere
-
-/**
- * These sources are valid on windows
- */
-export const windowsSources: TSourceType[] = [
-  'image_source',
-  'color_source',
-  'browser_source',
-  'slideshow',
-  'ffmpeg_source',
-  'text_gdiplus',
-  'monitor_capture',
-  'window_capture',
-  'game_capture',
-  'dshow_input',
-  'wasapi_input_capture',
-  'wasapi_output_capture',
-  'decklink-input',
-  'scene',
-  'ndi_source',
-  'openvr_capture',
-  'liv_capture',
-  'ovrstream_dc_source',
-  'vlc_source',
-];
-
-/**
- * These sources are valid on windows
- */
-export const macSources: TSourceType[] = [
-  'image_source',
-  'color_source',
-  'browser_source',
-  'slideshow',
-  'ffmpeg_source',
-  'text_ft2_source',
-  'scene',
-  'coreaudio_input_capture',
-  'coreaudio_output_capture',
-  'av_capture_input',
-  'display_capture',
-  'audio_line',
-];
 
 export class SourcesNode extends Node<ISchema, {}> {
   schemaVersion = 4;
@@ -204,34 +166,44 @@ export class SourcesNode extends Node<ISchema, {}> {
     });
   }
 
+  /**
+   * Returns true if this scene collection only contains sources
+   * supported by the current operating system.
+   */
+  isAllSupported() {
+    const supportedSources = byOS({ [OS.Windows]: windowsSources, [OS.Mac]: macSources });
+    return this.data.items.every(source => supportedSources.includes(source.type));
+  }
+
   load(context: {}): Promise<void> {
     this.sanitizeSources();
 
-    // This shit is complicated, IPC sucks
-    const sourceCreateData = this.data.items
-      .filter(source => {
-        // MAC-TODO: Filter based on platform
-        // Also make this non-destructive
-        return macSources.includes(source.type);
-      })
-      .map(source => {
-        return {
-          name: source.id,
-          type: source.type,
-          muted: source.muted || false,
-          settings: source.settings,
-          volume: source.volume,
-          syncOffset: source.syncOffset,
-          filters: source.filters.items.map(filter => {
-            return {
-              name: filter.name,
-              type: filter.type,
-              settings: filter.settings,
-              enabled: filter.enabled === void 0 ? true : filter.enabled,
-            };
-          }),
-        };
+    const supportedSources = this.data.items.filter(source => {
+      return byOS({
+        [OS.Windows]: () => windowsSources.includes(source.type),
+        [OS.Mac]: () => macSources.includes(source.type),
       });
+    });
+
+    // This shit is complicated, IPC sucks
+    const sourceCreateData = supportedSources.map(source => {
+      return {
+        name: source.id,
+        type: source.type,
+        muted: source.muted || false,
+        settings: source.settings,
+        volume: source.volume,
+        syncOffset: source.syncOffset,
+        filters: source.filters.items.map(filter => {
+          return {
+            name: filter.name,
+            type: filter.type,
+            settings: filter.settings,
+            enabled: filter.enabled === void 0 ? true : filter.enabled,
+          };
+        }),
+      };
+    });
 
     // This ensures we have bound the source size callback
     // before creating any sources in OBS.
@@ -241,9 +213,9 @@ export class SourcesNode extends Node<ISchema, {}> {
     const promises: Promise<void>[] = [];
 
     sources.forEach((source, index) => {
-      const sourceInfo = this.data.items[index];
+      const sourceInfo = supportedSources[index];
 
-      this.sourcesService.addSource(source, this.data.items[index].name, {
+      this.sourcesService.addSource(source, supportedSources[index].name, {
         channel: sourceInfo.channel,
         propertiesManager: sourceInfo.propertiesManager,
         propertiesManagerSettings: sourceInfo.propertiesManagerSettings || {},
@@ -271,7 +243,7 @@ export class SourcesNode extends Node<ISchema, {}> {
       }
 
       if (sourceInfo.hotkeys) {
-        promises.push(this.data.items[index].hotkeys.load({ sourceId: sourceInfo.id }));
+        promises.push(supportedSources[index].hotkeys.load({ sourceId: sourceInfo.id }));
       }
     });
 

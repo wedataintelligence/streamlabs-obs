@@ -171,7 +171,7 @@ export class WindowsService extends StatefulService<IWindowsState> {
       isShown: true,
       hideStyleBlockers: true,
       hideChat: false,
-      title: `Streamlabs OBS - Version: ${remote.process.env.SLOBS_VERSION}`,
+      title: `Streamlabs OBS - ${remote.process.env.SLOBS_VERSION}`,
     },
     child: {
       componentName: '',
@@ -212,7 +212,6 @@ export class WindowsService extends StatefulService<IWindowsState> {
     if (window && !window.isDestroyed()) {
       const bounds = window.getBounds();
       const currentDisplay = electron.remote.screen.getDisplayMatching(bounds);
-      console.log('SCALE FACTOR', windowId, currentDisplay.scaleFactor);
       this.UPDATE_SCALE_FACTOR(windowId, currentDisplay.scaleFactor);
     }
   }
@@ -309,6 +308,7 @@ export class WindowsService extends StatefulService<IWindowsState> {
 
     const newWindow = (this.windows[windowId] = new BrowserWindow({
       frame: false,
+      titleBarStyle: 'hidden',
       width: 400,
       height: 400,
       title: 'New Window',

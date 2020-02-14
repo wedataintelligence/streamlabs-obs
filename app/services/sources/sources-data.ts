@@ -143,7 +143,6 @@ export const SourceDisplayData = (): { [key: string]: ISourceDisplayData } => ({
     name: $t('VLC Source'),
     description: $t('Add playlists of videos to your scene.'),
   },
-  // MAC-TODO
   coreaudio_input_capture: {
     name: $t('Audio Input Capture'),
     description: $t(
@@ -176,10 +175,12 @@ export const SourceDisplayData = (): { [key: string]: ISourceDisplayData } => ({
     demoFilename: 'display-capture.png',
     supportList: [$t('Primary monitor'), $t('Secondary monitor')],
   },
-  // syphon_input: {
-  //   name: $t(''),
-  //   description: $t(''),
-  // },
+  'syphon-input': {
+    name: $t('Game Capture'),
+    description: $t("Capture a game you're playing on your computer."),
+    demoFilename: 'game-capture.png',
+    supportList: [$t('Built in works with most modern computer games')],
+  },
   audio_line: {
     name: $t('JACK Input Client'),
     description: $t(''),
