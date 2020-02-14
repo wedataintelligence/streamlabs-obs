@@ -170,6 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // MAC-TODO
       // crashHandler.registerProcess(appService.pid, false);
 
+      // const nwr = electron.remote.require('node-window-rendering');
+      // // nwr.createWindow();
+      // setTimeout(() => {
+      //   nwr.createWindow(obs.NodeObs.OBS_content_createIOSurface());
+      // }, 10000);
+      // // const surfaceID = 
+      // console.log(nwr);
+
       await obsUserPluginsService.initialize();
 
       // Initialize OBS API

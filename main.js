@@ -326,6 +326,10 @@ if (!gotTheLock) {
       //   openDevTools();
       // }, 10 * 1000);
     }
+
+    // setTimeout(() => {
+    //   nwr.createWindow();
+    // }, 10000);
   }
 
   const haDisableFile = path.join(app.getPath('userData'), 'HADisable');

@@ -334,6 +334,8 @@ export class VideoService extends Service {
         name,
         remderingMode,
       );
+      const nwr = electron.remote.require('node-window-rendering');
+      nwr.createWindow(obs.NodeObs.OBS_content_createIOSurface());
     }
   }
 
