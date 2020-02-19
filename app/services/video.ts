@@ -335,7 +335,8 @@ export class VideoService extends Service {
         remderingMode,
       );
       const nwr = electron.remote.require('node-window-rendering');
-      nwr.createWindow(obs.NodeObs.OBS_content_createIOSurface());
+      nwr.createWindow(electronWindow.getNativeWindowHandle());
+      nwr.connectIOSurface(obs.NodeObs.OBS_content_createIOSurface(name));
     }
   }
 
@@ -348,14 +349,24 @@ export class VideoService extends Service {
   }
 
   moveOBSDisplay(name: string, x: number, y: number) {
+    const nwr = electron.remote.require('node-window-rendering');
+    // nwr.createWindow(obs.NodeObs.OBS_content_createIOSurface(name));
+    nwr.moveWindow(x, y);
     obs.NodeObs.OBS_content_moveDisplay(name, x, y);
+    // nwr.createWindow(obs.NodeObs.OBS_content_createIOSurface(name));
   }
 
   resizeOBSDisplay(name: string, width: number, height: number) {
+    // const nwr = electron.remote.require('node-window-rendering');
+    // nwr.destroyWindow();
     obs.NodeObs.OBS_content_resizeDisplay(name, width, height);
+    // nwr.createWindow(obs.NodeObs.OBS_content_createIOSurface(name));
   }
 
   destroyOBSDisplay(name: string) {
+    const nwr = electron.remote.require('node-window-rendering');
+    nwr.destroyIOSurface();
+    nwr.destroyWindow();
     obs.NodeObs.OBS_content_destroyDisplay(name);
   }
 

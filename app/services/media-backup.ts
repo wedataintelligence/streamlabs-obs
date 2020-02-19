@@ -226,9 +226,9 @@ export class MediaBackupService extends StatefulService<IMediaBackupState> {
     let downloadedPath: string;
 
     try {
-      downloadedPath = await this.withRetry(() =>
-        this.downloadFile(data.url, serverId, data.filename),
-      );
+      // downloadedPath = await this.withRetry(() =>
+      //   this.downloadFile(data.url, serverId, data.filename),
+      // );
     } catch (e) {
       console.error(`[Media Backup] Error downloading file: ${e.body}`);
 

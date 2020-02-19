@@ -121,7 +121,7 @@ export class MediaGalleryService extends Service {
   }
 
   async downloadFile(filename: string, file: IMediaGalleryFile): Promise<void> {
-    return downloadFile(file.href, filename);
+    // return downloadFile(file.href, filename);
   }
 
   async deleteFile(file: IMediaGalleryFile): Promise<IMediaGalleryInfo> {
