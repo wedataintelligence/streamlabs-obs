@@ -84,9 +84,9 @@ export class TcpServerService extends PersistentStatefulService<ITcpServersSetti
   }
 
   listen() {
-    this.listenConnections(this.createTcpServer());
-    if (this.state.namedPipe.enabled) this.listenConnections(this.createNamedPipeServer());
-    if (this.state.websockets.enabled) this.listenConnections(this.createWebsoketsServer());
+    // this.listenConnections(this.createTcpServer());
+    // if (this.state.namedPipe.enabled) this.listenConnections(this.createNamedPipeServer());
+    // if (this.state.websockets.enabled) this.listenConnections(this.createWebsoketsServer());
   }
 
   /**
