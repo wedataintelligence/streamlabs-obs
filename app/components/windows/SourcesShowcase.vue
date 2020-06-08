@@ -67,6 +67,14 @@
     </add-source-info>
 
     <add-source-info
+      v-if="inspectedSource === 'joinMe'"
+      :name="$t('Join My Stream')"
+      :description="$t('Invite others to join your stream from a web browser.')"
+      key="joinme-source-info">
+      <img class="source__demo" slot="media" :src="require(`../../../media/source-demos/${demoMode}/video-capture.png`)"/>
+    </add-source-info>
+
+    <add-source-info
       v-for="appSource in availableAppSources"
       :key="`${appSource.appId}-${appSource.source.id}`"
       v-if="(inspectedSource === 'app_source') && (inspectedAppId === appSource.appId) && (inspectedAppSourceId === appSource.source.id)"
@@ -143,6 +151,13 @@
             @click="inspectSource('replay')"
             @dblclick="selectSource('ffmpeg_source', { propertiesManager: 'replay' })">
             <div>{{ $t('Instant Replay') }}</div>
+          </div>
+          <div
+            class="source source--widget"
+            :class="{ 'source--active': inspectedSource === 'joinMe' }"
+            @click="inspectSource('joinMe')"
+            @dblclick="selectSource('browser_source', { propertiesManager: 'joinMe' })">
+            <div>{{ $t('Join My Stream') }}</div>
           </div>
         </div>
       </div>

@@ -108,7 +108,13 @@ export type TSourceType =
   | 'vlc_source';
 
 // Register new properties managers here
-export type TPropertiesManager = 'default' | 'widget' | 'streamlabels' | 'platformApp' | 'replay';
+export type TPropertiesManager =
+  | 'default'
+  | 'widget'
+  | 'streamlabels'
+  | 'platformApp'
+  | 'replay'
+  | 'joinMe';
 
 export interface ISourcesState {
   sources: Dictionary<ISource>;

@@ -126,6 +126,8 @@ export default class SourcesShowcase extends Vue {
       this.selectSource('text_gdiplus', { propertiesManager: 'streamlabels' });
     } else if (this.inspectedSource === 'replay') {
       this.selectSource('ffmpeg_source', { propertiesManager: 'replay' });
+    } else if (this.inspectedSource === 'joinMe') {
+      this.selectSource('browser_source', { propertiesManager: 'joinMe' });
     } else if (this.inspectedSource === 'app_source') {
       this.selectAppSource(this.inspectedAppId, this.inspectedAppSourceId);
     } else {

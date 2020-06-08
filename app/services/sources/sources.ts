@@ -33,6 +33,7 @@ import { HardwareService, DefaultHardwareService } from 'services/hardware';
 import { AudioService } from '../audio';
 import { ReplayManager } from './properties-managers/replay-manager';
 import { assertIsDefined } from 'util/properties-type-guards';
+import { JoinMeManager } from './properties-managers/join-me-manager';
 
 const AudioFlag = obs.ESourceOutputFlags.Audio;
 const VideoFlag = obs.ESourceOutputFlags.Video;
@@ -45,6 +46,7 @@ export const PROPERTIES_MANAGER_TYPES = {
   streamlabels: StreamlabelsManager,
   platformApp: PlatformAppManager,
   replay: ReplayManager,
+  joinMe: JoinMeManager,
 };
 
 interface IObsSourceCallbackInfo {

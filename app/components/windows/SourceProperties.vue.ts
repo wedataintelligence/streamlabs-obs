@@ -10,6 +10,7 @@ import GenericForm from 'components/obs/inputs/GenericForm';
 import WidgetProperties from 'components/custom-source-properties/WidgetProperties.vue';
 import StreamlabelProperties from 'components/custom-source-properties/StreamlabelProperties.vue';
 import PlatformAppProperties from 'components/custom-source-properties/PlatformAppProperties.vue';
+import JoinMeProperties from 'components/custom-source-properties/JoinMeProperties';
 import { $t } from 'services/i18n';
 import { Subscription } from 'rxjs';
 import electron from 'electron';
@@ -25,6 +26,7 @@ import { EditorCommandsService } from 'services/editor-commands';
     WidgetProperties,
     StreamlabelProperties,
     PlatformAppProperties,
+    JoinMeProperties,
   },
 })
 export default class SourceProperties extends Vue {
