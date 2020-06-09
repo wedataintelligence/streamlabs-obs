@@ -126,6 +126,13 @@
         <h3>{{ $t('Widgets') }}</h3>
         <div class="source-list">
           <div
+            class="source source--widget"
+            :class="{ 'source--active': inspectedSource === 'joinMe' }"
+            @click="inspectSource('joinMe')"
+            @dblclick="selectSource('browser_source', { propertiesManager: 'joinMe' })">
+            <div><i class="icon-prime" :style="{ color: 'var(--prime)', marginRight: '8px' }" />{{ $t('Join My Stream') }}</div>
+          </div>
+          <div
             v-for="type in iterableWidgetTypes"
             :key="type"
             v-show="!widgetData(type).platforms || widgetData(type).platforms.has(platform)"
@@ -151,13 +158,6 @@
             @click="inspectSource('replay')"
             @dblclick="selectSource('ffmpeg_source', { propertiesManager: 'replay' })">
             <div>{{ $t('Instant Replay') }}</div>
-          </div>
-          <div
-            class="source source--widget"
-            :class="{ 'source--active': inspectedSource === 'joinMe' }"
-            @click="inspectSource('joinMe')"
-            @dblclick="selectSource('browser_source', { propertiesManager: 'joinMe' })">
-            <div>{{ $t('Join My Stream') }}</div>
           </div>
         </div>
       </div>
