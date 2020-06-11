@@ -22,7 +22,7 @@ export default class JoinMeProperties extends Vue {
   created() {
     this.refreshSettings();
 
-    fetch('https://8f503f72fcbe.ngrok.io/token?identity=slobsmonitor').then(resp => {
+    fetch('https://5434a889b917.ngrok.io/token?identity=slobsmonitor').then(resp => {
       resp.text().then(token => {
         console.log('Got Token', token);
 
@@ -76,7 +76,7 @@ export default class JoinMeProperties extends Vue {
   }
 
   get participantUrl() {
-    return `https://8f503f72fcbe.ngrok.io/?room=${this.managerSettings.uuid}&channel=${this.userService.platform.username}`;
+    return `https://5434a889b917.ngrok.io/?room=${this.managerSettings.uuid}&channel=${this.userService.platform.username}`;
   }
 
   copyParticipantLink() {
