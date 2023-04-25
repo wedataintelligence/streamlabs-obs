@@ -69,7 +69,7 @@
   "dependencies": {
     "@types/node-fetch": "^2.5.5",
     "archiver": "2.1.1",
-    "aws-sdk": "^2.344.0",
+    "aws-sdk": "^2.1354.0",
     "crash-handler": "https://slobs-crash-handler.s3-us-west-2.amazonaws.com/crash-handler-0.0.0.tar.gz",
     "electron-updater": "^4.2.0",
     "electron-window-state": "5.0.3",
